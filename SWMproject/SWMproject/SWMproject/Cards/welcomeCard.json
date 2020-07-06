@@ -5,7 +5,7 @@
   "body": [
     {
       "type": "Image",
-      "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU",
+      "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABI1BMVEUBiT//////yA/9/////f////4AgC0Ahzj/zAv/yQ4AhjwAiUcAh0NolzIAiT3n8uzt+e/7zQvT6NjM5dNYqHdXlzNDnGdPlDTKvRkCjEDuyBGw18EAgjUAjD3/xgzQ5dnQux4kj1MojDIAjDcAh0sAfjIAjEf/+f8AjzcAgEYAg0Dz/PoAhSwejEgwnWD1yw85lFri++9fpH6AvZsAkC8AhVNxuJC/2cIVgkM/kmB5ny+/uRnewxDtxRxrozA/lzy4vClcliQZmE+86s5csYCo273fyih7pSBTlD+939Jzr4yaqCh9qzCKoiJen3Sm38K02biNqiGnryMAdTWtuhdQiSvfvyEAdiWXqTKCoizEtya7tjhwpn6Ds5ecwKoAfxn0wirtcvR2AAAKAElEQVR4nO2ZDVvbOBLH5diJbFlV4qa8OLEMjh0DjtMQWLqBQAl9Xfp2pe3RK7vl9vt/ihvJBgLbZ0Mv7O49e/NrEyzZSfT3jDQzMiEIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAIgiAI8v34f/UA/mAk8wMpxF89jD8Qn/c3KSF/hkRx9efPvKO+iIZbXSnn/6ZUxiwRJFXwlBDuxhSO1CGc5Iy4TKjuFH7LFbHgcFy+KJXST5iAGUOFEFRQPXcYBQScYoRJcDTVYOrbOJHQqNFuENCY6tvFdR/8k0JdAl8F30k1eWRZ213K51bIeeL/4PKAUhYEAfxwRjj8IlG/kzPORJLWCIyf5xncATcRl/CdJNvI1n3CfMYLXDXG4pCMfOL7cpTB8QimFVGvrLv7qP1js9luP9pkVIJIno30B7mvbg7NCGVdHgGb0e7QNNpMzGtGTiWhe+P91sAbAK1W6+Cxy8Ytzf5hAIajk7J15B61Bq0p9idv4h0Od+NJo+BpV/rdp2Vjk/nywbA4bnfht1jw7L4BWOqt1/ylKySRUXFF7+lHopcX9vB5wyhYW1szVjI6p0I/zR+/CB2nUhKG4UvCVm19ZP9E03W+sVqeXUgWBmHlEqfl2ZUXj8G75BPDVBjNruT5U6OnG4uMr78rT7RzcMGkDeos3WFalmUcJzGJI93sGc2aGo6kr0yj+Dx0VquGUd+tzTX9pS9ee44XXgzccRz7C8+WbUdhL3EhubvsQH/F8Rb4PbviFGccfQtCx7bfcJ8+Ke/6/Zrwa02raCxSGT8wYMBG1WjXyPpoBaxnmlWjCpiqf6UvWKoO4LWiFPJ4t2eW3wW3AK41rd4jNpcN+d60WRT2W54pG6rDJZfCSrPswCWhVuhdXmXb6tgZhN4REdE1hWVjkUl6pdCvtY3rgIHaXZoaWqG5AlYm7DcXgcTmXGt4Gr+wK99U6HxToV26sjJgYfOKM2FktsJcvKtaNxSaa8a7uD+tUGQN4wbWPxidx4TpPS+0S/csma0wDGFJGjjqGOxoH3ToLRR2n1vmjbGDp77PI3NKYRz1btwGY/tzPNc85G9tNfyKt/rl5DXwAThKZ9nQnowgThw6A6fwZf5wtpd261qgZaw8rNHFZrXQW2dPpm1IN/U0hMnXPm63rZ7Ve1CbR55S+NrRCu3DJIGwlHE3G7k+m6VwzGWasnGxxjoL7BYKg0Khae7GsQQlhcIh+ZbCqnWc5zlvGPWH8ZwClQ0rWuHYz1yXcyF8CPUzbThmEOOTiXNhw9leeqHQavSpYLRf1yeMRlqsNNXrNjSOwXS7a800mDtrc/cGWqFTOfggs1RAcgbhYdY8dCYJrArBagXcNHT26XcoNBt9BlFvVC/ifoOnlrassZKrxC8qbGgcB77oP8/o+txJW9ppXUR7p/WhkwgGYyezvDQcLy0sLZxAnHHCgfOa32KluVBY7fUz+AG3bmo3rXNf90JMCCDTU/FfX6/jP72LTF/wt5fpjGe3Jp0EvjadoVBF/8HAU/5tt8KJ8PPvmIc9P76usKq7rcZHGsf5ljWl8G7ws/FFQAztgROepPQWCsF2KhSqsPgpA8N/jw1HH2s1tbJaPaUwpeUSazbfRdGrhlEIPr4zhYK7o4mn5YQDlaJU9v+ZiOT3FaogAXFTXePYB49jKFZvr9Aa9hRVo7ChW4P+IkJopSpRg+Z2flcKodCU2cILCPTeoDRk63CWDcPQ81RS6nlwW0LvJPmOeXiDupt/1bKu0HJ34/mS0SkkpNYp/XJaBP6Kio77yQyFnndwqoon6A7VZYfxf62w4cbdoWVcUwgp93kg70qhqqxdRpNsb3mgywXleHszvBSiBSWM+RPtqQNnwqdqC/mdCtn6bs+4YcNjckcmTCXbOAnSGIIgT+iCkhWqqmG8sWoXsfwnlsJadKYaTni10nhjVepnhxXt2fbBZTxs1ljabeoBQ31IoQLWYU/lpRcKYdap4skoszaYJXT3fpGkqnc1C9sjeUc7iTFPlu1OpDcdUsKyl0XwD5e7pUJnqbYBdbhW6IXOpQ1V1ib9tHPg6Q+06JVCCB1Nq8hLNgMG9aFxXaFpXvjihULhi+zRivJNdXbNXHkQ3NmOV7K0bw/AQ5mC8IQdaNcEhctOYayXSUKS/LRSKFyaVghDW2gVc7dVFHnA8DONP98vi4gHwXr+6qZCo7e1CDwoszalMCOylm2Vycwwiqm4gw02DT8aOM7gX6/fvH379ot6jbXXDSrLG2elwoO9H7LDogHZy2FZAYPCjSwbkZ9tFWEq3gHJSoXW01+eHZt6aTTX6l+3vjbURgQM/PyitjAboxjuZzKlEKZLur5bLQzfyIVP5t9fU2T0ja1Xjcu60C6zG+/Dzkvb0yfDqd5wPyP3dMux9X6Up48d2xkn/673blZ/05jG1pUN+wzmcAoRv3qpEJKch4VCsw4uCokrSecWGPNPeuhhWbRPb2Uc8n5R+eli/qLX/kLIvctquexUNb79mAXb1m9K12mFdUJvrZD4amORz21H99TzKt/EPmPr7OTG3gZI3Y8pudqnKVWCTWFSUjdtmL+ncJuyWQqtK4Uiy3w592oT7x1A3lxR/4vlQo1W1UL2wbpw5c5ltqrTT+hvdbiElQbcVr8UKsuzK6dLnHC6pRbHarmLZuo9tWqxkwjtHwMmgrq+BeZNhcUmjChsaFn1LvGjZ49G8z+TSdnSi1D7op5x2iR6Nk7UPrpM2Qko1hkLhHq46LTjJzFZGEwb3oPLK5OO8ieab/UMq9AAf4bHpkqmLY3ZrsHMyutasNWL1POWftEy60ms3TFe1PejZwypDJ61t5/NHzCE79bGoaqYfm0NSlqt0w+HIoV0IqUuO/y55YG9PDCTt7q3k0jqiyPP9qZo7Z8tuHpPmsc0Oh8qNwNTDM9Fd6tZrjy9lXcUJpb4OCwcttGH6kmMyj21YVLYkC72io5GBonQ8+3F+W2Yp7HLP3nOr53ResBYoB+GCA46XKJ28kkcZ+Lo9YfJ2dnJ4w5PcxpLl6T9zjS1xA1koj6gnrDQbPfV+fv32+8yKqVgO1vn7efbWzssprBy+H4UFY8jiH4E0y+aUVZuhnI4E0U7USSJzDajbP6kxqUpLMsv7Up/pJ47qdUZEhtR+AwRwuUJaFTZACQ78Kau0c9S3CkIRGsRKxuqGMaghIXSL1elOWci1i0qGVMXCKKeQQl1tfoJ9bxJNS9ju4RALyhksowLMLlP7iYxlcnRC5G7f98HrT5NeYew+YPr/y4u9bl+9Pm3pZh0cz0WQBAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQf5P+Q+ipSyo/TIMYQAAAABJRU5ErkJggg==",
       "size": "stretch"
     },
     {
@@ -13,7 +13,7 @@
       "spacing": "medium",
       "size": "default",
       "weight": "bolder",
-      "text": "Welcome to Bot Framework!",
+      "text": "Welcome to SandwichMaker",
       "wrap": true,
       "maxLines": 0
     },
@@ -21,7 +21,7 @@
       "type": "TextBlock",
       "size": "default",
       "isSubtle": true,
-      "text": "Now that you have successfully run your bot, follow the links in this Adaptive Card to expand your knowledge of Bot Framework.",
+      "text": "편리하게 서브웨이를 이용하세요. 지금 바로 주문 가능",
       "wrap": true,
       "maxLines": 0
     }
@@ -29,18 +29,13 @@
   "actions": [
     {
       "type": "Action.OpenUrl",
-      "title": "Get an overview",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0"
+      "title": "홈페이지 접속",
+      "url": "https://www.subway.co.kr/"
     },
     {
       "type": "Action.OpenUrl",
-      "title": "Ask a question",
-      "url": "https://stackoverflow.com/questions/tagged/botframework"
-    },
-    {
-      "type": "Action.OpenUrl",
-      "title": "Learn how to deploy",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-deploy-azure?view=azure-bot-service-4.0"
+      "title": "이벤트/프로모션 보기",
+      "url": "https://www.subway.co.kr/eventList"
     }
   ]
 }
