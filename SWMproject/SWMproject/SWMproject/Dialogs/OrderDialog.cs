@@ -22,7 +22,14 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
-                //2~5
+                //2 메뉴
+                MenuStepAsync,
+                //3 빵
+                BreadStepAsync,
+                //4 치즈
+                CheeseStepAsync,
+                //5 데우기
+                WarmupStepAsync,
                 //6 야채
                 //7 소스
                 SauseStepAsync,
@@ -44,8 +51,56 @@ namespace SWMproject.Dialogs
         }
 
         //async 정의
+        private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("메뉴를 선택해주세요."),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "쉬림프", "로티세리 바비큐 치킨", "폴드포크", "에그마요","이탈리안 비엠티","비엘티","미트볼","햄","참치","로스트 치킨","터키","베지","써브웨이 클럽","스테이크 & 치즈","스파이시 이탈리안","써브웨이 멜트","치킨 데리야끼" }),
+               }, cancellationToken);
+        }
+        
+        private static async Task<DialogTurnResult> BreadStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
+
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("빵을 선택해주세요."),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "허니오트", "하티", "파마산 오레가노", "화이트","플랫 브레드","위트" }),
+               }, cancellationToken);
+        }
+
+        private static async Task<DialogTurnResult> CheeseStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
+
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("치즈를 선택해주세요."),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "아메리칸 치즈","슈레드 치즈","모차렐라 치즈" }),
+               }, cancellationToken);
+        }
+
+        private static async Task<DialogTurnResult> WarmupStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["cheese"] = ((FoundChoice)stepContext.Result).Value;
+
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("빵을 데울까요?"),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "네","아니오" }),
+               }, cancellationToken);
+        }
+
         private static async Task<DialogTurnResult> SauseStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            stepContext.Values["wramup"] = ((FoundChoice)stepContext.Result).Value;
+
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {

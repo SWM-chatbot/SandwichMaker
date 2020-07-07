@@ -31,7 +31,7 @@ namespace SWMproject.Bots
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
                     var welcomeCard = CreateAdaptiveCardAttachment();
-                    var response = MessageFactory.Attachment(welcomeCard, ssml: "Welcome to Bot Framework!");
+                    var response = MessageFactory.Attachment(welcomeCard, ssml: "Welcome to Sandwich Maker!");
                     await turnContext.SendActivityAsync(response, cancellationToken);
                     await Dialog.RunAsync(turnContext, ConversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
                 }
