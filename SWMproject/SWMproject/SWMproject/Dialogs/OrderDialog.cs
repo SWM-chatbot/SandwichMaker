@@ -67,11 +67,22 @@ namespace SWMproject.Dialogs
         {
             stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
 
+            var attachments = new List<Attachment>();
+            var reply = MessageFactory.Attachment(attachments);
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            reply.Attachments.Add(Cards.GetBreadCard(1).ToAttachment());
+            reply.Attachments.Add(Cards.GetBreadCard(2).ToAttachment());
+            reply.Attachments.Add(Cards.GetBreadCard(3).ToAttachment());
+            reply.Attachments.Add(Cards.GetBreadCard(4).ToAttachment());
+            reply.Attachments.Add(Cards.GetBreadCard(5).ToAttachment());
+            reply.Attachments.Add(Cards.GetBreadCard(6).ToAttachment());
+            await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("빵을 선택해주세요."),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "허니오트", "하티", "파마산 오레가노", "화이트","플랫 브레드","위트" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "허니오트", "하티", "파마산 오레가노", "화이트","플랫브래드","위트" }),
                }, cancellationToken);
         }
 
@@ -125,6 +136,26 @@ namespace SWMproject.Dialogs
         private static async Task<DialogTurnResult> SauseStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["vege"] = ((FoundChoice)stepContext.Result).Value;
+
+            var attachments = new List<Attachment>();
+            var reply = MessageFactory.Attachment(attachments);
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            reply.Attachments.Add(Cards.GetSauceCard(1).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(2).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(3).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(4).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(5).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(6).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(7).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(8).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(9).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(10).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(11).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(12).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(13).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(14).ToAttachment());
+            reply.Attachments.Add(Cards.GetSauceCard(15).ToAttachment());
+            await stepContext.Context.SendActivityAsync(reply, cancellationToken);
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
