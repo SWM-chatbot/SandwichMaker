@@ -19,7 +19,6 @@ namespace SWMproject.Data
         public bool Warmup { get; set; }
         //6. 빼는 야채
         public string Vege { get; set; }
-
         //7. 소스 선택
         public string Sauce { get; set; }
         //8. 세트 선택

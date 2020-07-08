@@ -242,7 +242,7 @@ namespace SWMproject.Dialogs
             var msg = $"메뉴:{orderData.Menu} 빵:{orderData.Bread} 치즈:{orderData.Cheese} 소스:{orderData.Sauce} 빼는야채:{orderData.Vege} 세트:{orderData.SetMenu} ";
             if (orderData.SetMenu!="단품")
             {
-                msg += $"세트음료 :{orderData.SetDrink}";
+                msg += $"세트음료:{orderData.SetDrink}";
             }
             msg += $"요구사항:{orderData.Requirement}";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
