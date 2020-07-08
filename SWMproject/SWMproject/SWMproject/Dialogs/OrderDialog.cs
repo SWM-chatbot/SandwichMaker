@@ -31,11 +31,13 @@ namespace SWMproject.Dialogs
                 //5 데우기
                 WarmupStepAsync,
                 //6 야채
+                VegeStepAsync,
                 //7 소스
                 SauseStepAsync,
                 //8 세트 선택
                 SetMenuStepAsync,
                 //9 추가 요구사항
+                RequirementStepAsync,
                 //10 주문내역
                 SummaryStepAsync
             };
@@ -77,12 +79,21 @@ namespace SWMproject.Dialogs
         {
             stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
 
+            var attachments = new List<Attachment>();
+            var reply = MessageFactory.Attachment(attachments);
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            reply.Attachments.Add(Cards.GetCheeseCard(1).ToAttachment());
+            reply.Attachments.Add(Cards.GetCheeseCard(2).ToAttachment());
+            reply.Attachments.Add(Cards.GetCheeseCard(3).ToAttachment());
+            await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+            
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("치즈를 선택해주세요."),
                    Choices = ChoiceFactory.ToChoices(new List<string> { "아메리칸 치즈","슈레드 치즈","모차렐라 치즈" }),
                }, cancellationToken);
+            
         }
 
         private static async Task<DialogTurnResult> WarmupStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -97,15 +108,29 @@ namespace SWMproject.Dialogs
                }, cancellationToken);
         }
 
+        private static async Task<DialogTurnResult> VegeStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["warmup"] = false;
+            if (((FoundChoice)stepContext.Result).Value == "네"){
+                stepContext.Values["wramup"] = true;
+            }
+            
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("빼고 싶은 야채를 선택해주세요. "),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "선택 안함","양상추","토마토","오이","피망","양파","피클","올리브","할라피뇨" }),
+               }, cancellationToken);
+        }
         private static async Task<DialogTurnResult> SauseStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["wramup"] = ((FoundChoice)stepContext.Result).Value;
+            stepContext.Values["vege"] = ((FoundChoice)stepContext.Result).Value;
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("소스를 선택해주세요."),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "스위트칠리","랜치","어니언머시기","웅앵웅" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "선택 안함","랜치","마요네즈","스위트 어니언","허니 머스타드","스위트 칠리","핫 칠리","사우스 웨스트","머스타드","홀스래디쉬","소금","후추","스모크 바비큐" }),
                }, cancellationToken);
         }
 
@@ -121,21 +146,40 @@ namespace SWMproject.Dialogs
                }, cancellationToken);
         }
 
+        private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["setmenu"] = false;
+            if (((FoundChoice)stepContext.Result).Value == "네")
+            {
+                stepContext.Values["setmenu"] = true;
+            }
+            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
+
+        }
+
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["setmenu"] = ((FoundChoice)stepContext.Result).Value;
+            stepContext.Values["requirement"] = (string)stepContext.Result;
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            orderData.Menu = (string)stepContext.Values["menu"];
+            orderData.Bread = (string)stepContext.Values["bread"];
+            orderData.Cheese = (string)stepContext.Values["cheese"];
+            orderData.Warmup = (bool)stepContext.Values["warmup"];
+            orderData.Vege = (string)stepContext.Values["vege"];
             orderData.Sauce = (string)stepContext.Values["sauce"];
-            if ((string)stepContext.Values["setmenu"] == "네"){ orderData.SetMenu = true;}
-            else { orderData.SetMenu = false; }
+            orderData.SetMenu = (bool)stepContext.Values["setmenu"];
+            orderData.Requirement = (string)stepContext.Values["requirement"];
+            
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
-            var msg = $"소스:{orderData.Sauce},";
+            var msg = $"메뉴:{orderData.Menu} 빵:{orderData.Bread} 치즈:{orderData.Cheese} 소스:{orderData.Sauce} 빼는야채:{orderData.Vege} ";
             if (orderData.SetMenu)
             {
-                msg += "세트";
+                msg += "세트 ";
             }
+            msg += $"요구사항:{orderData.Requirement}";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is the end.
