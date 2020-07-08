@@ -7,6 +7,8 @@ namespace SWMproject.Data
 {
     public class OrderData
     {
+        public int price { get; set; }
+
         //2. 메뉴 선택
         public string Menu { get; set; }
         //3. 빵 선택
@@ -21,7 +23,10 @@ namespace SWMproject.Data
         //7. 소스 선택
         public string Sauce { get; set; }
         //8. 세트 선택
-        public bool SetMenu { get; set; }
+        public string SetMenu { get; set; }
+        public string SetDrink { get; set; }
+        //단품
+        public string[] AddiOrder { get; set; }
         //9. 요구사항
         public string Requirement { get; set; }
     }
