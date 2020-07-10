@@ -137,6 +137,7 @@ namespace SWMproject.Dialogs
 
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Bread = (string)stepContext.Values["bread"];
+            orderData.Vege = new List<string> { "토마토", "올리브", "양상추", "양파", "파프리카", "오이", "피망", "피클", "할라피뇨" };
 
             return await stepContext.BeginDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
         
