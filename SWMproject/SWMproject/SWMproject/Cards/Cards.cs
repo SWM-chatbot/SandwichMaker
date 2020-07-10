@@ -530,7 +530,7 @@ namespace SWMproject
                         Subtitle = "Double Chocolate Chip 210kcal",
                         Text = "부드러운 화이트 초콜릿과 다크 초콜릿의 절묘한 조화로 더욱 풍부한 달콤함",
                         Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_03.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "더블 초코칩") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "더블 초코칩쿠키") },
                     };
                     break;
                 case 2:
@@ -540,7 +540,7 @@ namespace SWMproject
                         Subtitle = "Chocolate Chip 200kcal",
                         Text = "알알이 가득한 초코의 가장 클래식한 달콤함",
                         Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_04.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "초코칩") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "초코칩쿠키") },
                     };
                     break;
                 case 3:
@@ -550,7 +550,7 @@ namespace SWMproject
                         Subtitle = "Oatmeal Raisin 200kcal",
                         Text = "캘리포니아 건포도와 귀리에 살짝 더해진 계피향의 환상적인 조화",
                         Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_05.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "오트밀 레이즌") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "오트밀 레이즌쿠키") },
                     };
                     break;
                 case 4:
@@ -560,7 +560,7 @@ namespace SWMproject
                         Subtitle = "Raspberry Cheese Cake 200kcal",
                         Text = "부드럽고 풍부한 치즈와 새콤달콤 라즈베리의 달콤한 만남",
                         Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_06.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "라즈베리 치즈케익") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "라즈베리 치즈케익쿠키") },
                     };
                     break;
                 case 5:
@@ -570,7 +570,7 @@ namespace SWMproject
                         Subtitle = "White Choco Macadamia 220kcal",
                         Text = "고소함 가득한 마카다미아와 달콤한 화이트 초콜릿의 환상 궁합",
                         Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_07.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "화이트 초코 마카다미아") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "화이트 초코 마카다미아쿠키") },
                     };
                     break;
                 case 6:

@@ -27,7 +27,8 @@ namespace SWMproject.Dialogs
                 //3 메뉴
                 MenuStepAsync,
                 //4 토핑 카드 보여주기
-                AddToppingStepAsync,
+                ShowToppingStepAsync,
+
                 //8 세트 선택
                 SetMenuStepAsync,
                 SetMenuAddiStepAsync,
@@ -41,6 +42,7 @@ namespace SWMproject.Dialogs
             };
 
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
+            AddDialog(new AddToppingDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
@@ -92,7 +94,7 @@ namespace SWMproject.Dialogs
                }, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> AddToppingStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> ShowToppingStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
 
@@ -131,22 +133,14 @@ namespace SWMproject.Dialogs
             var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
             await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
 
-            //현재 샌드위치 상태
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Bread = (string)stepContext.Values["bread"];
+            orderData.Vege = new List<string> { "토마토", "올리브", "양상추", "양파", "파프리카", "오이", "피망", "피클", "할라피뇨" };
 
-            var Sandwich = $"[현재 샌드위치 상태] \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n";
-            for(int i=0; i<orderData.Vege.Length; i++)
-            {
-                Sandwich += $"{orderData.Vege[i]} ";
-            }
-            Sandwich += $"\r\n{orderData.Bread}";
-            var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(Sandwich) };
-
-            return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
-            //return await stepContext.ReplaceDialogAsync(nameof(ReviewSelectionDialog), list, cancellationToken);
+            return await stepContext.BeginDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
+        
         }
 
         /*
@@ -179,7 +173,7 @@ namespace SWMproject.Dialogs
         */
         private static async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["sauce"] = stepContext.Result;
+            //stepContext.Values["sauce"] = ((FoundChoice)stepContext.Result).Value;
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
@@ -199,7 +193,7 @@ namespace SWMproject.Dialogs
                 var reply = MessageFactory.Attachment(attachments);
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
-                for (int i = 1; i <= 5; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
+                for (int i = 1; i <= 6; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
 
                 await stepContext.Context.SendActivityAsync(reply, cancellationToken);
 
@@ -207,7 +201,7 @@ namespace SWMproject.Dialogs
                 new PromptOptions
                 {
                    Prompt = MessageFactory.Text("세트 메뉴를 골라주세요"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> {"칩","더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> {"더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키","칩"}),
                 }, cancellationToken);
             }
 
@@ -230,10 +224,11 @@ namespace SWMproject.Dialogs
 
         private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-
-            stepContext.Values["setdrink"] = ((FoundChoice)stepContext.Result).Value;
+            if ((string)stepContext.Values["setmenu"] != "단품")
+            {
+                stepContext.Values["setdrink"] = ((FoundChoice)stepContext.Result).Value;
+            }
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
-
         }
 
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -242,24 +237,45 @@ namespace SWMproject.Dialogs
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            orderData.Menu = (string)stepContext.Values["menu"];
-            orderData.Bread = (string)stepContext.Values["bread"];
-            orderData.Cheese = (string)stepContext.Values["cheese"];
-            orderData.Warmup = (bool)stepContext.Values["warmup"];
-            //orderData.Vege = (string)stepContext.Values["vege"];
-            orderData.Sauce = (string)stepContext.Values["sauce"];
             orderData.SetMenu = (string)stepContext.Values["setmenu"];
-            orderData.SetDrink = (string)stepContext.Values["setdrink"];
             orderData.Requirement = (string)stepContext.Values["requirement"];
             
-
+            //주문 가격 체크도 필요함..!
+            //receipt card형식으로 수정해야함 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
-            var msg = $"메뉴:{orderData.Menu} 빵:{orderData.Bread} 치즈:{orderData.Cheese} 소스:{orderData.Sauce} 빼는야채:{orderData.Vege} 세트:{orderData.SetMenu} ";
+            var Sandwich = $"{orderData.Bread}\r\n{orderData.Menu}\r\n";
+            //야채
+            for (int i = 0; i < orderData.Vege.Count; i++)
+            {
+                Sandwich += $"{orderData.Vege[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //치즈
+            for (int i = 0; i < orderData.Cheese.Count; i++)
+            {
+                Sandwich += $"{orderData.Cheese[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //소스
+            for (int i = 0; i < orderData.Sauce.Count; i++)
+            {
+                Sandwich += $"{orderData.Sauce[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //추가토핑
+            for (int i = 0; i < orderData.Topping.Count; i++)
+            {
+                Sandwich += $"{orderData.Topping[i]} ";
+            }
+            Sandwich += $"\r\n{orderData.Bread}";
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(Sandwich), cancellationToken);
+            var msg = "";
             if (orderData.SetMenu!="단품")
             {
-                msg += $"세트음료:{orderData.SetDrink}";
+                orderData.SetDrink = (string)stepContext.Values["setdrink"];
+                msg += $"\r\n세트음료:{orderData.SetDrink}";
             }
-            msg += $"요구사항:{orderData.Requirement}";
+            msg += $"\r\n요구사항:{orderData.Requirement}";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is the end.
