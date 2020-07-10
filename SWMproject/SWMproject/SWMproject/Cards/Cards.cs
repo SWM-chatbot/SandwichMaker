@@ -256,7 +256,7 @@ namespace SWMproject
                 case 1:
                     heroCard = new HeroCard
                     {
-                        Title = "미트 추가  -1,800원",
+                        Title = "미트 추가  - 1,800원",
                         Subtitle = "Meat",
                         Text = "주 재료를 2배로 더 푸짐하게 즐기세요",
                         Images = new List<CardImage> { new CardImage("https://m.subway.co.kr/images/menu/img_toppping_01.jpg") },
@@ -518,6 +518,63 @@ namespace SWMproject
             }
             return heroCard;
         }
-
+        public static HeroCard GetCookieCard(int index)
+        {
+            var heroCard = new HeroCard();
+            switch (index)
+            {
+                case 1:
+                    heroCard = new HeroCard
+                    {
+                        Title = "더블 초코칩",
+                        Subtitle = "Double Chocolate Chip 210kcal",
+                        Text = "부드러운 화이트 초콜릿과 다크 초콜릿의 절묘한 조화로 더욱 풍부한 달콤함",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_03.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "더블 초코칩") },
+                    };
+                    break;
+                case 2:
+                    heroCard = new HeroCard
+                    {
+                        Title = "초코칩",
+                        Subtitle = "Chocolate Chip 200kcal",
+                        Text = "알알이 가득한 초코의 가장 클래식한 달콤함",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_04.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "초코칩") },
+                    };
+                    break;
+                case 3:
+                    heroCard = new HeroCard
+                    {
+                        Title = "오트밀 레이즌",
+                        Subtitle = "Oatmeal Raisin 200kcal",
+                        Text = "캘리포니아 건포도와 귀리에 살짝 더해진 계피향의 환상적인 조화",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_05.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "오트밀 레이즌") },
+                    };
+                    break;
+                case 4:
+                    heroCard = new HeroCard
+                    {
+                        Title = "라즈베리 치즈케익",
+                        Subtitle = "Raspberry Cheese Cake 200kcal",
+                        Text = "부드럽고 풍부한 치즈와 새콤달콤 라즈베리의 달콤한 만남",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_06.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "라즈베리 치즈케익") },
+                    };
+                    break;
+                case 5:
+                    heroCard = new HeroCard
+                    {
+                        Title = "화이트 초코 마카다미아",
+                        Subtitle = "White Choco Macadamia 220kcal",
+                        Text = "고소함 가득한 마카다미아와 달콤한 화이트 초콜릿의 환상 궁합",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_07.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "화이트 초코 마카다미아") },
+                    };
+                    break;
+            }
+            return heroCard;
+        }
     }
 }
