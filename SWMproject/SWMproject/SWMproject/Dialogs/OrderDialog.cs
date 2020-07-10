@@ -32,9 +32,7 @@ namespace SWMproject.Dialogs
                 SetMenuStepAsync,
                 SetMenuAddiStepAsync,
                 SetMenuDrinkStepAsync,
-
                 //단품 추가
-
 
                 //9 추가 요구사항
                 RequirementStepAsync,
@@ -139,10 +137,16 @@ namespace SWMproject.Dialogs
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Bread = (string)stepContext.Values["bread"];
 
-
-            var promptOptions = new PromptOptions { Prompt = MessageFactory.Text($"현재 샌드위치 상태 \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n{orderData.Vege}\r\n{orderData.Bread}") };
+            var Sandwich = $"현재 샌드위치 상태 \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n";
+            for(int i=0; i<orderData.Vege.Length; i++)
+            {
+                Sandwich += $"{orderData.Vege[i]} ";
+            }
+            Sandwich += $"\r\n{orderData.Bread}";
+            var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(Sandwich) };
 
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
+            //return await stepContext.ReplaceDialogAsync(nameof(ReviewSelectionDialog), list, cancellationToken);
         }
 
         /*
