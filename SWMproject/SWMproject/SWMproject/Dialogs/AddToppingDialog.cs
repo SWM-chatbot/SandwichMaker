@@ -123,6 +123,32 @@ namespace SWMproject.Dialogs
                 case "유자 폰즈": case "랜치드레싱": case "마요네즈": case "스위트 어니언": case "허니 머스타드": case "스위트 칠리": case "핫 칠리": case "사우스 웨스트": case "머스타드": case "홀스래디쉬": case "올리브 오일": case "레드와인식초": case "소금": case "후추": case "스모크 바비큐":
                     orderData.Sauce.Add(topping);
                     break;
+                case "토핑종류":
+                    var attachments = new List<Attachment>();
+
+                    //치즈 카드
+                    var cheeseReply = MessageFactory.Attachment(attachments);
+                    cheeseReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    for (int i = 1; i <= 3; i++) cheeseReply.Attachments.Add(Cards.GetCheeseCard(i).ToAttachment());
+                    await stepContext.Context.SendActivityAsync(cheeseReply, cancellationToken);
+
+                    //소스 카드 보여주기
+                    var sauceReply = MessageFactory.Attachment(attachments);
+                    sauceReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    for (int i = 1; i <= 15; i++) sauceReply.Attachments.Add(Cards.GetSauceCard(i).ToAttachment());
+                    await stepContext.Context.SendActivityAsync(sauceReply, cancellationToken);
+
+                    //추가 토핑 카드 보여주기
+                    var toppingReply = MessageFactory.Attachment(attachments);
+                    toppingReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    for (int i = 1; i <= 9; i++) toppingReply.Attachments.Add(Cards.GetToppingCard(i).ToAttachment());
+                    await stepContext.Context.SendActivityAsync(toppingReply, cancellationToken);
+
+                    break;
+                case "가이드" : case "?" : case "help":
+                    var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
+                    await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
+                    break;
                 default:
                     await stepContext.Context.SendActivityAsync("없는 토핑입니다, 다시 입력해주세요!");
                     break;
