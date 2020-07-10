@@ -201,7 +201,7 @@ namespace SWMproject.Dialogs
                 new PromptOptions
                 {
                    Prompt = MessageFactory.Text("세트 메뉴를 골라주세요"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> {"칩","더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> {"더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키","칩"}),
                 }, cancellationToken);
             }
 
@@ -237,25 +237,45 @@ namespace SWMproject.Dialogs
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            orderData.Menu = (string)stepContext.Values["menu"];
-            orderData.Bread = (string)stepContext.Values["bread"];
-            //orderData.Cheese = (string)stepContext.Values["cheese"];
-            //orderData.Warmup = (bool)stepContext.Values["warmup"];
-            //orderData.Vege = (string)stepContext.Values["vege"];
-            //orderData.Sauce = (string)stepContext.Values["sauce"];
             orderData.SetMenu = (string)stepContext.Values["setmenu"];
             orderData.Requirement = (string)stepContext.Values["requirement"];
             
             //주문 가격 체크도 필요함..!
             //receipt card형식으로 수정해야함 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
-            var msg = $"메뉴:{orderData.Menu} 빵:{orderData.Bread} 치즈:{orderData.Cheese} 소스:{orderData.Sauce} 빼는야채:{orderData.Vege} 세트:{orderData.SetMenu} ";
+            var Sandwich = $"{orderData.Bread}\r\n{orderData.Menu}\r\n";
+            //야채
+            for (int i = 0; i < orderData.Vege.Count; i++)
+            {
+                Sandwich += $"{orderData.Vege[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //치즈
+            for (int i = 0; i < orderData.Cheese.Count; i++)
+            {
+                Sandwich += $"{orderData.Cheese[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //소스
+            for (int i = 0; i < orderData.Sauce.Count; i++)
+            {
+                Sandwich += $"{orderData.Sauce[i]} ";
+            }
+            Sandwich += $"\r\n";
+            //추가토핑
+            for (int i = 0; i < orderData.Topping.Count; i++)
+            {
+                Sandwich += $"{orderData.Topping[i]} ";
+            }
+            Sandwich += $"\r\n{orderData.Bread}";
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(Sandwich), cancellationToken);
+            var msg = "";
             if (orderData.SetMenu!="단품")
             {
                 orderData.SetDrink = (string)stepContext.Values["setdrink"];
-                msg += $"세트음료:{orderData.SetDrink}";
+                msg += $"\r\n세트음료:{orderData.SetDrink}";
             }
-            msg += $"요구사항:{orderData.Requirement}";
+            msg += $"\r\n요구사항:{orderData.Requirement}";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is the end.
