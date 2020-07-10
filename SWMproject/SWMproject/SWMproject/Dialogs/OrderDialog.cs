@@ -193,7 +193,7 @@ namespace SWMproject.Dialogs
                 var reply = MessageFactory.Attachment(attachments);
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
-                for (int i = 1; i <= 5; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
+                for (int i = 1; i <= 6; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
 
                 await stepContext.Context.SendActivityAsync(reply, cancellationToken);
 
