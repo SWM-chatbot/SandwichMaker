@@ -18,7 +18,7 @@ namespace SWMproject.Data
         //5. 데우기
         public bool Warmup { get; set; }
         //6. 빼는 야채
-        public string Vege { get; set; }
+        public string[] Vege { get; set; } = { "토마토", "올리브","양상추","양파","파프리카","오이","피망","피클","할라피뇨" };
         //7. 소스 선택
         public string Sauce { get; set; }
         //8. 세트 선택
