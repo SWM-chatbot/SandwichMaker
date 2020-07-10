@@ -573,6 +573,16 @@ namespace SWMproject
                         Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "화이트 초코 마카다미아") },
                     };
                     break;
+                case 6:
+                    heroCard = new HeroCard
+                    {
+                        Title = "칩",
+                        Subtitle = " Chip",
+                        Text = "바삭바삭한 칩을 추가해 써브웨이를 즐겨보세요",
+                        Images = new List<CardImage> { new CardImage("https://www.subway.co.kr/images/menu/img_sides_08.jpg") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "칩") },
+                    };
+                    break;
             }
             return heroCard;
         }

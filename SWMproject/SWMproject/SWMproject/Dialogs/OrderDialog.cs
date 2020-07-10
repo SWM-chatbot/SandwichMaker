@@ -184,7 +184,7 @@ namespace SWMproject.Dialogs
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
-                   Prompt = MessageFactory.Text(stepContext.Values["sauce"]+" 1900원 추가 지불하고 세트로 주문하시겠습니까?"),
+                   Prompt = MessageFactory.Text(" 1900원 추가 지불하고 세트로 주문하시겠습니까?"),
                    Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오" }),
                }, cancellationToken);
         }
@@ -207,7 +207,7 @@ namespace SWMproject.Dialogs
                 new PromptOptions
                 {
                    Prompt = MessageFactory.Text("세트 메뉴를 골라주세요"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> {"더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> {"칩","더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
                 }, cancellationToken);
             }
 
