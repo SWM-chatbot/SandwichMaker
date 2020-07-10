@@ -128,7 +128,7 @@ namespace SWMproject.Dialogs
             //야채 카드 보여주기
 
             //입력 tip 
-            var tipMsg = MessageFactory.Text("입력 TIP!! \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
+            var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
             await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
 
             //현재 샌드위치 상태
@@ -137,7 +137,7 @@ namespace SWMproject.Dialogs
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Bread = (string)stepContext.Values["bread"];
 
-            var Sandwich = $"현재 샌드위치 상태 \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n";
+            var Sandwich = $"[현재 샌드위치 상태] \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n";
             for(int i=0; i<orderData.Vege.Length; i++)
             {
                 Sandwich += $"{orderData.Vege[i]} ";
@@ -179,12 +179,12 @@ namespace SWMproject.Dialogs
         */
         private static async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["sauce"] = ((FoundChoice)stepContext.Result).Value;
+            stepContext.Values["sauce"] = stepContext.Result;
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
-                   Prompt = MessageFactory.Text("1900원 추가 지불하고 세트로 주문하시겠습니까?"),
+                   Prompt = MessageFactory.Text(" 1900원 추가 지불하고 세트로 주문하시겠습니까?"),
                    Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오" }),
                }, cancellationToken);
         }
@@ -194,11 +194,20 @@ namespace SWMproject.Dialogs
             if (((FoundChoice)stepContext.Result).Value == "네")
             {
                 stepContext.Values["setmenu"] = "세트";
+
+                var attachments = new List<Attachment>();
+                var reply = MessageFactory.Attachment(attachments);
+                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+
+                for (int i = 1; i <= 5; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
+
+                await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+
                 return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
                 {
                    Prompt = MessageFactory.Text("세트 메뉴를 골라주세요"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> {"미니 칩","더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> {"칩","더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키" }),
                 }, cancellationToken);
             }
 
