@@ -8,6 +8,7 @@ using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using SWMproject.Data;
+using SWMproject;
 
 namespace SWMproject.Dialogs
 {
@@ -82,17 +83,6 @@ namespace SWMproject.Dialogs
                         Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
                     }, cancellationToken);
                 }
-                /*
-                else if (orderData.Sauce.Count == 0)
-                {
-                    return await stepContext.PromptAsync(nameof(ChoicePrompt),
-                    new PromptOptions
-                    {
-                        Prompt = MessageFactory.Text("소스가 선택되지 않았어요. 이대로 주문할까요?"),
-                        Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
-                    }, cancellationToken);
-                }
-                */
                 else 
                 {
                     return await stepContext.PromptAsync(nameof(ChoicePrompt),
@@ -124,25 +114,12 @@ namespace SWMproject.Dialogs
                     orderData.Sauce.Add(topping);
                     break;
                 case "토핑종류":
-                    var attachments = new List<Attachment>();
-
                     //치즈 카드
-                    var cheeseReply = MessageFactory.Attachment(attachments);
-                    cheeseReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                    for (int i = 1; i <= 3; i++) cheeseReply.Attachments.Add(Cards.GetCheeseCard(i).ToAttachment());
-                    await stepContext.Context.SendActivityAsync(cheeseReply, cancellationToken);
-
+                    await stepContext.Context.SendActivityAsync(Cards.GetCard("cheese"), cancellationToken);
                     //소스 카드 보여주기
-                    var sauceReply = MessageFactory.Attachment(attachments);
-                    sauceReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                    for (int i = 1; i <= 15; i++) sauceReply.Attachments.Add(Cards.GetSauceCard(i).ToAttachment());
-                    await stepContext.Context.SendActivityAsync(sauceReply, cancellationToken);
-
+                    await stepContext.Context.SendActivityAsync(Cards.GetCard("sauce"), cancellationToken);
                     //추가 토핑 카드 보여주기
-                    var toppingReply = MessageFactory.Attachment(attachments);
-                    toppingReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                    for (int i = 1; i <= 9; i++) toppingReply.Attachments.Add(Cards.GetToppingCard(i).ToAttachment());
-                    await stepContext.Context.SendActivityAsync(toppingReply, cancellationToken);
+                    await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
                     break;
                 case "가이드" : case "?" : case "help":

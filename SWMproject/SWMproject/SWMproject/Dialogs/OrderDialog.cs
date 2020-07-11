@@ -56,15 +56,8 @@ namespace SWMproject.Dialogs
         private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
-
-            var attachments = new List<Attachment>();
-            var reply = MessageFactory.Attachment(attachments);
-            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-            for (int i = 1; i <= 16; i++)
-                reply.Attachments.Add(Cards.GetMenuCard(i).ToAttachment());
             
-            await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("menu"), cancellationToken);
 
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
@@ -77,14 +70,7 @@ namespace SWMproject.Dialogs
         
         private static async Task<DialogTurnResult> BreadStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            
-            var attachments = new List<Attachment>();
-            var reply = MessageFactory.Attachment(attachments);
-            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-            for(int i=1;i<=6;i++) reply.Attachments.Add(Cards.GetBreadCard(i).ToAttachment());
-
-            await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("bread"), cancellationToken);
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
@@ -98,36 +84,17 @@ namespace SWMproject.Dialogs
         {
             stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
 
-            var attachments = new List<Attachment>();
-
             //치즈 카드 보여주기
-            var cheeseReply = MessageFactory.Attachment(attachments);
-            cheeseReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-            var cheeseMsg = MessageFactory.Text("치즈 종류입니다");
-            for (int i = 1; i <= 3; i++) cheeseReply.Attachments.Add(Cards.GetCheeseCard(i).ToAttachment());
-            await stepContext.Context.SendActivityAsync(cheeseMsg, cancellationToken);
-            await stepContext.Context.SendActivityAsync(cheeseReply, cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("치즈 종류입니다"), cancellationToken);
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("cheese"), cancellationToken);
 
             //소스 카드 보여주기
-            var sauceReply = MessageFactory.Attachment(attachments);
-            sauceReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-            var sauceMsg = MessageFactory.Text("소스 종류입니다");
-            for (int i = 1; i <= 15; i++) sauceReply.Attachments.Add(Cards.GetSauceCard(i).ToAttachment());
-            await stepContext.Context.SendActivityAsync(sauceMsg, cancellationToken);
-            await stepContext.Context.SendActivityAsync(sauceReply, cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("소스 종류입니다"), cancellationToken);
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("sauce"), cancellationToken);
 
             //추가 토핑 카드 보여주기
-            var toppingReply = MessageFactory.Attachment(attachments);
-            toppingReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-            var toppingMsg = MessageFactory.Text("추가 토핑 종류입니다");
-            for (int i = 1; i <= 9; i++) toppingReply.Attachments.Add(Cards.GetToppingCard(i).ToAttachment());
-            await stepContext.Context.SendActivityAsync(toppingMsg, cancellationToken);
-            await stepContext.Context.SendActivityAsync(toppingReply, cancellationToken);
-
-            //야채 카드 보여주기
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("추가 토핑 종류입니다"), cancellationToken);
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
             //입력 tip 
             var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
@@ -138,6 +105,11 @@ namespace SWMproject.Dialogs
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Bread = (string)stepContext.Values["bread"];
             orderData.Vege = new List<string> { "토마토", "올리브", "양상추", "양파", "파프리카", "오이", "피망", "피클", "할라피뇨" };
+            orderData.Cheese = new List<string>();
+            orderData.Sauce = new List<string>();
+            orderData.SetMenu = "단품";
+            orderData.Topping = new List<string>();
+            orderData.AddiOrder = new List<string>();
 
             return await stepContext.BeginDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
         
@@ -173,8 +145,6 @@ namespace SWMproject.Dialogs
         */
         private static async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            //stepContext.Values["sauce"] = ((FoundChoice)stepContext.Result).Value;
-
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
@@ -189,13 +159,7 @@ namespace SWMproject.Dialogs
             {
                 stepContext.Values["setmenu"] = "세트";
 
-                var attachments = new List<Attachment>();
-                var reply = MessageFactory.Attachment(attachments);
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-
-                for (int i = 1; i <= 6; i++) reply.Attachments.Add(Cards.GetCookieCard(i).ToAttachment());
-
-                await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+                await stepContext.Context.SendActivityAsync(Cards.GetCard("cookie"), cancellationToken);
 
                 return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
