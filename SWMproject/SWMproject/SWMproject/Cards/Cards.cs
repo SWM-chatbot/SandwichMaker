@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 
 namespace SWMproject
 {
     public class Cards
     {
-        public static HeroCard GetMenuCard(int index)
+        public static HeroCard MenuCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -179,7 +180,7 @@ namespace SWMproject
             }
             return heroCard;
         }
-        public static HeroCard GetBreadCard(int index)
+        public static HeroCard BreadCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -248,7 +249,7 @@ namespace SWMproject
             }
             return heroCard;
         }
-        public static HeroCard GetToppingCard(int index)
+        public static HeroCard ToppingCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -338,7 +339,7 @@ namespace SWMproject
             }
             return heroCard;
         }
-        public static HeroCard GetCheeseCard(int index)
+        public static HeroCard CheeseCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -366,7 +367,7 @@ namespace SWMproject
                     {
                         Title = "모차렐라 치즈",
                         Subtitle = "Mozzarella Cheese 44kcal",
-                        Text = "치즈 설명 웅애웅",
+                        Text = "",
                         Images = new List<CardImage> { new CardImage("https://m.subway.co.kr/images/menu/img_recipe_c03.jpg") },
                     };
                     break;
@@ -374,7 +375,7 @@ namespace SWMproject
             return heroCard;
         }
 
-        public static HeroCard GetSauceCard(int index)
+        public static HeroCard SauceCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -518,7 +519,7 @@ namespace SWMproject
             }
             return heroCard;
         }
-        public static HeroCard GetCookieCard(int index)
+        public static HeroCard CookieCard(int index)
         {
             var heroCard = new HeroCard();
             switch (index)
@@ -585,6 +586,35 @@ namespace SWMproject
                     break;
             }
             return heroCard;
+        }
+        public static IMessageActivity GetCard(string msg)
+        {
+            var attachments = new List<Attachment>();
+            var reply = MessageFactory.Attachment(attachments);
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            int i = 1;
+            switch (msg)
+            {
+                case "menu":
+                    for (i = 1; i <= 16; i++) reply.Attachments.Add(Cards.MenuCard(i).ToAttachment());
+                    break;
+                case "bread":
+                    for (i = 1; i <= 6; i++) reply.Attachments.Add(Cards.BreadCard(i).ToAttachment());
+                    break;
+                case "topping":
+                    for (i = 1; i <= 9; i++) reply.Attachments.Add(Cards.ToppingCard(i).ToAttachment());
+                    break;
+                case "cheese":
+                    for (i = 1; i <= 3; i++) reply.Attachments.Add(Cards.CheeseCard(i).ToAttachment());
+                    break;
+                case "sauce":
+                    for (i = 1; i <= 15; i++) reply.Attachments.Add(Cards.SauceCard(i).ToAttachment());
+                    break;
+                case "cookie":
+                    for (i = 1; i <= 6; i++) reply.Attachments.Add(Cards.CookieCard(i).ToAttachment());
+                    break;
+            }
+            return reply;
         }
     }
 }
