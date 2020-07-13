@@ -8,13 +8,33 @@ using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using SWMproject.Data;
-using SWMproject;
+using Azure;
+using System;
+using Azure.AI.TextAnalytics;
+using System.Diagnostics;
 
 namespace SWMproject.Dialogs
 {
     public class AddToppingDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
+        private static readonly AzureKeyCredential credentials = new AzureKeyCredential("805fa0ee93384dbf8524ffbc66d393e1");
+        private static readonly Uri endpoint = new Uri("https://team20-ta.cognitiveservices.azure.com/");
+
+        static Response<KeyPhraseCollection> KeyPhraseExtraction(TextAnalyticsClient client,string input)
+        {
+            var response = client.ExtractKeyPhrases(input,"ko");
+
+            // Printing key phrases
+            Debug.Print("Key phrases:");
+            foreach (string keyphrase in response.Value)
+            {
+                Debug.Print($"\t{keyphrase}");
+                //Console.WriteLine();
+            }
+
+            return response;
+        }
 
         public AddToppingDialog(UserState userState) : base(nameof(AddToppingDialog))
         {
@@ -60,26 +80,33 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             var topping = (string)stepContext.Result;
+            //if (topping.Contains("-"){ }
 
-            if (topping == "완성")
+            var client = new TextAnalyticsClient(endpoint, credentials);
+            var response = KeyPhraseExtraction(client,topping);
+
+            foreach (string pharase in response.Value)
             {
-                if (orderData.Cheese.Count == 0 || orderData.Sauce.Count == 0)
+                if (pharase == "완성")
                 {
-                    return await stepContext.PromptAsync(nameof(ChoicePrompt),
-                    new PromptOptions
+                    if (orderData.Cheese.Count == 0 || orderData.Sauce.Count == 0)
                     {
-                        Prompt = MessageFactory.Text("치즈 혹은 소스가 선택되지 않았어요. 이대로 주문할까요?"),
-                        Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
-                    }, cancellationToken);
-                }
-                else 
-                {
-                    return await stepContext.PromptAsync(nameof(ChoicePrompt),
+                        return await stepContext.PromptAsync(nameof(ChoicePrompt),
                         new PromptOptions
                         {
-                            Prompt = MessageFactory.Text("이대로 주문할까요?"),
+                            Prompt = MessageFactory.Text("치즈 혹은 소스가 선택되지 않았어요. 이대로 주문할까요?"),
                             Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
                         }, cancellationToken);
+                    }
+                    else
+                    {
+                        return await stepContext.PromptAsync(nameof(ChoicePrompt),
+                            new PromptOptions
+                            {
+                                Prompt = MessageFactory.Text("이대로 주문할까요?"),
+                                Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
+                            }, cancellationToken);
+                    }
                 }
             }
             switch (topping)
