@@ -30,5 +30,6 @@ namespace SWMproject.Data
         public List<string> AddiOrder { get; set; }
         //9. 요구사항
         public string Requirement { get; set; }
+
     }
 }
