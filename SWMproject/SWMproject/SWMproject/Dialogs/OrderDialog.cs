@@ -28,7 +28,8 @@ namespace SWMproject.Dialogs
                 MenuStepAsync,
                 //4 토핑 카드 보여주기
                 ShowToppingStepAsync,
-
+                // 빵 데우기
+                WarmupStepAsync,
                 //8 세트 선택
                 SetMenuStepAsync,
                 SetMenuAddiStepAsync,
@@ -115,11 +116,8 @@ namespace SWMproject.Dialogs
         
         }
 
-        /*
         private static async Task<DialogTurnResult> WarmupStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["cheese"] = ((FoundChoice)stepContext.Result).Value;
-
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
@@ -128,23 +126,10 @@ namespace SWMproject.Dialogs
                }, cancellationToken);
         }
 
-        private static async Task<DialogTurnResult> VegeStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            stepContext.Values["warmup"] = false;
-            if (((FoundChoice)stepContext.Result).Value == "네"){
-                stepContext.Values["wramup"] = true;
-            }
-            
-            return await stepContext.PromptAsync(nameof(ChoicePrompt),
-               new PromptOptions
-               {
-                   Prompt = MessageFactory.Text("빼고 싶은 야채를 선택해주세요. "),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "선택 안함","양상추","토마토","오이","피망","양파","피클","올리브","할라피뇨" }),
-               }, cancellationToken);
-        }
-        */
         private static async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            stepContext.Values["warmup"] = ((FoundChoice)stepContext.Result).Value;
+
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
@@ -203,9 +188,18 @@ namespace SWMproject.Dialogs
 
             orderData.SetMenu = (string)stepContext.Values["setmenu"];
             orderData.Requirement = (string)stepContext.Values["requirement"];
-            
+
             //주문 가격 체크도 필요함..!
             //receipt card형식으로 수정해야함 
+            var receiptCard = new ReceiptCard
+            {
+                Title = "Subway receipt",
+                Items= new List<ReceiptItem>
+                { 
+                    new ReceiptItem()
+                },
+            };
+
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
             var Sandwich = $"{orderData.Bread}\r\n{orderData.Menu}\r\n";
             //야채
