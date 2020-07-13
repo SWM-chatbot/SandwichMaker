@@ -40,33 +40,22 @@ namespace SWMproject.Dialogs
 
             var Sandwich = $"[현재 샌드위치 상태] \r\n{orderData.Bread}\r\n{orderData.Menu}\r\n";
             //야채
-            for (int i = 0; i < orderData.Vege.Count; i++)
-            {
-                Sandwich += $"{orderData.Vege[i]} ";
-            }
+            Sandwich += $"{PrintTopping(orderData.Vege,1)} ";
             Sandwich += $"\r\n";
             //치즈
-            for(int i=0; i<orderData.Cheese.Count; i++)
-            {
-                Sandwich += $"{orderData.Cheese[i]} ";
-            }
+            Sandwich += $"{PrintTopping(orderData.Cheese,0)} ";
             Sandwich += $"\r\n";
             //소스
-            for (int i = 0; i < orderData.Sauce.Count; i++)
-            {
-                Sandwich += $"{orderData.Sauce[i]} ";
-            }
+            Sandwich += $"{PrintTopping(orderData.Sauce,1)} ";
             Sandwich += $"\r\n";
             //추가토핑
-            for (int i = 0; i < orderData.Topping.Count; i++)
-            {
-                Sandwich += $"{orderData.Topping[i]} ";
-            }
+            Sandwich += $"{PrintTopping(orderData.Topping,0)} ";
             Sandwich += $"\r\n{orderData.Bread}";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(Sandwich) };
 
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
         }
+
         private async Task<DialogTurnResult> LoopStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
@@ -99,19 +88,40 @@ namespace SWMproject.Dialogs
                 case "토마토":case "올리브": case "양파":case "양상추":case "파프리카":case "오이":case "피망":case "피클":case "할라피뇨":
                     orderData.Vege.Add(topping);
                     break;
+                case "-토마토": case "-올리브": case "-양파": case "-양상추": case "-파프리카": case "-오이": case "-피망": case "-피클": case "-할라피뇨":
+                    topping=topping.TrimStart('-');
+                    if(orderData.Vege.Contains(topping)) orderData.Vege.Remove(topping);
+                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
+                    break;
                 //치즈
                 case "아메리칸 치즈": case "슈레드 치즈": case "모차렐라 치즈":
                     orderData.Cheese.Add(topping);
                     //치즈 두장 토핑추가 가격 체크
+                    break;
+                case "-아메리칸 치즈": case "-슈레드 치즈": case "-모차렐라 치즈":
+                    topping = topping.TrimStart('-');
+                    if (orderData.Cheese.Contains(topping))orderData.Cheese.Remove(topping);
+                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
                     break;
                 //추가토핑
                 case "미트 추가": case "베이컨 비츠": case "쉬림프 더블업": case "에그마요": case "오믈렛": case "아보카도": case "베이컨": case "페퍼로니":
                     orderData.Topping.Add(topping);
                     //가격 체크
                     break;
+                case "-미트 추가": case "-베이컨 비츠": case "-쉬림프 더블업": case "-에그마요": case "-오믈렛": case "-아보카도": case "-베이컨": case "-페퍼로니":
+                    topping = topping.TrimStart('-');
+                    if (orderData.Topping.Contains(topping)) orderData.Topping.Remove(topping);
+                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
+                    break;
                 //소스
                 case "유자 폰즈": case "랜치드레싱": case "마요네즈": case "스위트 어니언": case "허니 머스타드": case "스위트 칠리": case "핫 칠리": case "사우스 웨스트": case "머스타드": case "홀스래디쉬": case "올리브 오일": case "레드와인식초": case "소금": case "후추": case "스모크 바비큐":
                     orderData.Sauce.Add(topping);
+                    break;
+                case "-유자 폰즈": case "-랜치드레싱": case "-마요네즈": case "-스위트 어니언": case "-허니 머스타드": case "-스위트 칠리": case "-핫 칠리": case "-사우스 웨스트":
+                case "-머스타드": case "-홀스래디쉬": case "-올리브 오일": case "-레드와인식초": case "-소금": case "-후추": case "-스모크 바비큐":
+                    topping = topping.TrimStart('-');
+                    if (orderData.Sauce.Contains(topping)) orderData.Sauce.Remove(topping);
+                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
                     break;
                 case "토핑종류":
                     //치즈 카드
@@ -141,6 +151,42 @@ namespace SWMproject.Dialogs
             else return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
+        //토핑 출력 형식
+        private static string PrintTopping(List<string> toppingType,int ver)
+        {
+            var Topping = "";
+            List<string> tmp = new List<string>();
+            int[] count = new int[toppingType.Count];
+
+            //중복 체크
+            for (int i = 0; i < toppingType.Count; i++)
+            {
+                count[i] = 0;
+                if (!tmp.Contains(toppingType[i]))
+                {
+                    count[i] = 1;
+                    tmp.Add(toppingType[i]);
+                }
+                else
+                {
+                    int index = tmp.FindIndex(x => x.StartsWith(toppingType[i]));
+                    count[index]++;
+                }
+            }
+
+            //출력
+            for (int i = 0; i < toppingType.Count; i++)
+            {
+                if (count[i] == 1) Topping += $"{toppingType[i]} ";
+                else if (count[i] > 1)
+                {
+                    if (ver==1) Topping += $"+{toppingType[i]} ";
+                    else Topping += $"{toppingType[i]} X{count[i]}";
+                }
+            }
+            return Topping;
+        }
+
     }
-    
+
 }
