@@ -18,6 +18,7 @@ namespace SWMproject.Dialogs
     public class AddToppingDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
+        //key같은거 깃헙에 올릴때 가려서 올리기!!
         private static readonly AzureKeyCredential credentials = new AzureKeyCredential("805fa0ee93384dbf8524ffbc66d393e1");
         private static readonly Uri endpoint = new Uri("https://team20-ta.cognitiveservices.azure.com/");
 
@@ -30,7 +31,6 @@ namespace SWMproject.Dialogs
             foreach (string keyphrase in response.Value)
             {
                 Debug.Print($"\t{keyphrase}");
-                //Console.WriteLine();
             }
 
             return response;
@@ -78,14 +78,18 @@ namespace SWMproject.Dialogs
 
         private async Task<DialogTurnResult> LoopStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            bool isAdding = true;
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             var topping = (string)stepContext.Result;
-            //if (topping.Contains("-"){ }
+            if (topping.Contains("-"))
+            {
+                isAdding = false;
+            }
 
             var client = new TextAnalyticsClient(endpoint, credentials);
-            var response = KeyPhraseExtraction(client,topping);
+            var response = KeyPhraseExtraction(client, topping);
 
-            foreach (string pharase in response.Value)
+            foreach (var pharase in response.Value)
             {
                 if (pharase == "완성")
                 {
@@ -103,70 +107,86 @@ namespace SWMproject.Dialogs
                         return await stepContext.PromptAsync(nameof(ChoicePrompt),
                             new PromptOptions
                             {
-                                Prompt = MessageFactory.Text("이대로 주문할까요?"),
+                                Prompt = MessageFactory.Text("이대로 주문할까요?"), //confirm factory 확인해보고 코드 수정하기?
                                 Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
                             }, cancellationToken);
                     }
                 }
-            }
-            switch (topping)
-            {
-                //야채
-                case "토마토":case "올리브": case "양파":case "양상추":case "파프리카":case "오이":case "피망":case "피클":case "할라피뇨":
-                    orderData.Vege.Add(topping);
-                    break;
-                case "-토마토": case "-올리브": case "-양파": case "-양상추": case "-파프리카": case "-오이": case "-피망": case "-피클": case "-할라피뇨":
-                    topping=topping.TrimStart('-');
-                    if(orderData.Vege.Contains(topping)) orderData.Vege.Remove(topping);
-                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
-                    break;
-                //치즈
-                case "아메리칸 치즈": case "슈레드 치즈": case "모차렐라 치즈":
-                    orderData.Cheese.Add(topping);
-                    //치즈 두장 토핑추가 가격 체크
-                    break;
-                case "-아메리칸 치즈": case "-슈레드 치즈": case "-모차렐라 치즈":
-                    topping = topping.TrimStart('-');
-                    if (orderData.Cheese.Contains(topping))orderData.Cheese.Remove(topping);
-                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
-                    break;
-                //추가토핑
-                case "미트 추가": case "베이컨 비츠": case "쉬림프 더블업": case "에그마요": case "오믈렛": case "아보카도": case "베이컨": case "페퍼로니":
-                    orderData.Topping.Add(topping);
-                    //가격 체크
-                    break;
-                case "-미트 추가": case "-베이컨 비츠": case "-쉬림프 더블업": case "-에그마요": case "-오믈렛": case "-아보카도": case "-베이컨": case "-페퍼로니":
-                    topping = topping.TrimStart('-');
-                    if (orderData.Topping.Contains(topping)) orderData.Topping.Remove(topping);
-                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
-                    break;
-                //소스
-                case "유자 폰즈": case "랜치드레싱": case "마요네즈": case "스위트 어니언": case "허니 머스타드": case "스위트 칠리": case "핫 칠리": case "사우스 웨스트": case "머스타드": case "홀스래디쉬": case "올리브 오일": case "레드와인식초": case "소금": case "후추": case "스모크 바비큐":
-                    orderData.Sauce.Add(topping);
-                    break;
-                case "-유자 폰즈": case "-랜치드레싱": case "-마요네즈": case "-스위트 어니언": case "-허니 머스타드": case "-스위트 칠리": case "-핫 칠리": case "-사우스 웨스트":
-                case "-머스타드": case "-홀스래디쉬": case "-올리브 오일": case "-레드와인식초": case "-소금": case "-후추": case "-스모크 바비큐":
-                    topping = topping.TrimStart('-');
-                    if (orderData.Sauce.Contains(topping)) orderData.Sauce.Remove(topping);
-                    else await stepContext.Context.SendActivityAsync("이미 삭제된 토핑입니다. 다시 입력해주세요!");
-                    break;
-                case "토핑종류":
+
+                string pharase_type = null;
+                if (Topping.vege.Contains(pharase))
+                    pharase_type = "야채";
+                else if (Topping.cheese.Contains(pharase))
+                    pharase_type = "치즈";
+                else if (Topping.sauce.Contains(pharase))
+                    pharase_type = "소스";
+                else if (Topping.topping.Contains(pharase))
+                    pharase_type = "추가토핑";
+                //토핑 종류
+                else if (pharase.Contains("토핑"))
+                {
                     //치즈 카드
                     await stepContext.Context.SendActivityAsync(Cards.GetCard("cheese"), cancellationToken);
                     //소스 카드 보여주기
                     await stepContext.Context.SendActivityAsync(Cards.GetCard("sauce"), cancellationToken);
                     //추가 토핑 카드 보여주기
                     await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
-
-                    break;
-                case "가이드" : case "?" : case "help":
+                }
+                //가이드
+                else if (pharase.Contains("가이드") || pharase.Contains("?") || pharase.Contains("help"))
+                {
                     var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
                     await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
-                    break;
-                default:
+                }
+                else
+                {
                     await stepContext.Context.SendActivityAsync("없는 토핑입니다, 다시 입력해주세요!");
-                    break;
+                }
+
+                if (pharase_type != null)
+                {
+                    if (isAdding)//토핑추가
+                    {
+                        switch (pharase_type)
+                        {
+                            case "야채": orderData.Vege.Add(pharase);break;
+                            case "치즈": orderData.Cheese.Add(pharase); break; //치즈가격
+                            case "소스": orderData.Sauce.Add(pharase); break;
+                            case "추가토핑": orderData.Topping.Add(pharase); break; //토핑 가격
+                        }
+                        await stepContext.Context.SendActivityAsync(pharase + " 토핑이 추가되었습니다.");
+                    }
+                    else //토핑삭제
+                    {
+                        bool flag = true;
+                        switch (pharase_type)
+                        {
+                            case "야채":
+                                if (orderData.Vege.Contains(pharase)) orderData.Vege.Remove(pharase);
+                                else flag = false;
+                                break;
+                            case "치즈":
+                                if (orderData.Cheese.Contains(pharase)) orderData.Cheese.Remove(pharase);
+                                else flag = false;
+                                break;
+                            case "소스":
+                                if (orderData.Sauce.Contains(pharase)) orderData.Sauce.Remove(pharase);
+                                else flag = false;
+                                break;
+                            case "추가토핑":
+                                if (orderData.Topping.Contains(pharase)) orderData.Topping.Remove(pharase);
+                                else flag = false;
+                                break;
+                        }
+                        if (flag)
+                        {
+                            await stepContext.Context.SendActivityAsync(pharase + " 토핑이 삭제되었습니다.");
+                        }
+                        else await stepContext.Context.SendActivityAsync(pharase + " 토핑은 이미 삭제된 토핑입니다.");
+                    }
+                }
             }
+
                 return await stepContext.ReplaceDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
         }
 
