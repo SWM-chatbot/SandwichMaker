@@ -152,7 +152,7 @@ namespace SWMproject.Dialogs
         }
 
         //토핑 출력 형식
-        private static string PrintTopping(List<string> toppingType,int ver)
+        public string PrintTopping(List<string> toppingType,int ver)
         {
             var Topping = "";
             List<string> tmp = new List<string>();
