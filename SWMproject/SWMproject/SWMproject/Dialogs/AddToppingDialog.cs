@@ -150,9 +150,15 @@ namespace SWMproject.Dialogs
                         switch (pharase_type)
                         {
                             case "야채": orderData.Vege.Add(pharase);break;
-                            case "치즈": orderData.Cheese.Add(pharase); break; //치즈가격
+                            case "치즈": orderData.Cheese.Add(pharase);
+                                if (orderData.Cheese.Count > 1)//치즈가격
+                                { 
+                                    orderData.Price += Topping.topping_price["치즈 추가"];
+                                    orderData.Topping.Add("치즈 추가");
+                                }
+                                break; 
                             case "소스": orderData.Sauce.Add(pharase); break;
-                            case "추가토핑": orderData.Topping.Add(pharase); break; //토핑 가격
+                            case "추가토핑": orderData.Topping.Add(pharase); orderData.Price += Topping.topping_price[pharase]; break; //토핑 가격
                         }
                         await stepContext.Context.SendActivityAsync(pharase + " 토핑이 추가되었습니다.");
                     }
@@ -166,7 +172,15 @@ namespace SWMproject.Dialogs
                                 else flag = false;
                                 break;
                             case "치즈":
-                                if (orderData.Cheese.Contains(pharase)) orderData.Cheese.Remove(pharase);
+                                if (orderData.Cheese.Contains(pharase)) 
+                                { 
+                                    orderData.Cheese.Remove(pharase);
+                                    if (orderData.Cheese.Count > 0)
+                                    {
+                                        orderData.Price -= Topping.topping_price["치즈 추가"];
+                                        orderData.Topping.Remove("치즈 추가");
+                                    }
+                                }
                                 else flag = false;
                                 break;
                             case "소스":
@@ -174,7 +188,11 @@ namespace SWMproject.Dialogs
                                 else flag = false;
                                 break;
                             case "추가토핑":
-                                if (orderData.Topping.Contains(pharase)) orderData.Topping.Remove(pharase);
+                                if (orderData.Topping.Contains(pharase))
+                                {
+                                    orderData.Topping.Remove(pharase);
+                                    orderData.Price -= Topping.topping_price[pharase];
+                                }
                                 else flag = false;
                                 break;
                         }

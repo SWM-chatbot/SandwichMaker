@@ -7,7 +7,8 @@ namespace SWMproject.Data
 {
     public class OrderData
     {
-        public int price { get; set; }
+        public int OrderNum { get; set; } = 0;
+        public int Price { get; set; }
 
         //2. 메뉴 선택
         public string Menu { get; set; }
