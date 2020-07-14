@@ -199,20 +199,21 @@ namespace SWMproject.Dialogs
         }
 
         //토핑 출력 형식
-        private static string PrintTopping(List<string> toppingType,int ver)
+        public string PrintTopping(List<string> toppingType,int ver)
         {
             var Topping = "";
             List<string> tmp = new List<string>();
             int[] count = new int[toppingType.Count];
+            int idx = 0;
 
             //중복 체크
             for (int i = 0; i < toppingType.Count; i++)
             {
-                count[i] = 0;
                 if (!tmp.Contains(toppingType[i]))
                 {
-                    count[i] = 1;
+                    count[idx] = 1;
                     tmp.Add(toppingType[i]);
+                    idx++;
                 }
                 else
                 {
@@ -224,11 +225,12 @@ namespace SWMproject.Dialogs
             //출력
             for (int i = 0; i < toppingType.Count; i++)
             {
-                if (count[i] == 1) Topping += $"{toppingType[i]} ";
+                
+                if (count[i] == 1) Topping += $"{tmp[i]} ";
                 else if (count[i] > 1)
                 {
-                    if (ver==1) Topping += $"+{toppingType[i]} ";
-                    else Topping += $"{toppingType[i]} X{count[i]}";
+                    if (ver==1) Topping += $"+{tmp[i]} ";
+                    else Topping += $"{tmp[i]} X{count[i]} ";
                 }
             }
             return Topping;
