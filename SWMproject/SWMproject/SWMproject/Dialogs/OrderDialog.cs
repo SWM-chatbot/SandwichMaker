@@ -103,7 +103,9 @@ namespace SWMproject.Dialogs
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
+            orderData.Price = 0;
             orderData.Menu = (string)stepContext.Values["menu"];
+            orderData.Price += Topping.menu_price[orderData.Menu];
             orderData.Bread = (string)stepContext.Values["bread"];
             orderData.Vege = new List<string> { "토마토", "올리브", "양상추", "양파", "파프리카", "오이", "피망", "피클", "할라피뇨" };
             orderData.Cheese = new List<string>();
@@ -188,19 +190,45 @@ namespace SWMproject.Dialogs
 
             orderData.SetMenu = (string)stepContext.Values["setmenu"];
             orderData.Requirement = (string)stepContext.Values["requirement"];
-
-            //주문 가격 체크도 필요함..!
-            //receipt card형식으로 수정해야함 
+                
+            orderData.OrderNum++;
+            List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image:new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
+            ItemList.Add(new ReceiptItem("메뉴", price: Topping.menu_price[orderData.Menu].ToString() + "원"));
+            foreach (string temp in orderData.Topping)
+            {
+                ItemList.Add(new ReceiptItem(temp, price: Topping.topping_price[temp].ToString()+"원"));
+            }
+            if (orderData.SetMenu != "단품")
+            {
+                orderData.SetDrink = (string)stepContext.Values["setdrink"];
+                ItemList.Add(new ReceiptItem("세트", subtitle:$"{orderData.SetMenu},{orderData.SetDrink}", price: "1900원"));
+                orderData.Price += 1900;
+            }
+            string vege = "";
+            string sauce = "";
+            foreach(string temp in orderData.Vege)
+            {
+                vege += temp + ",";
+            }
+            foreach(string temp in orderData.Sauce)
+            {
+                sauce += temp + ",";
+            }
+            ItemList.Add(new ReceiptItem("야채", subtitle: vege));
+            ItemList.Add(new ReceiptItem("소스", subtitle: sauce));
+            ItemList.Add(new ReceiptItem("요구사항", subtitle:$"{orderData.Requirement}"));
+            ItemList.Add(new ReceiptItem("-----------------------------------"));
+            
             var receiptCard = new ReceiptCard
             {
                 Title = "Subway receipt",
-                Items= new List<ReceiptItem>
-                { 
-                    new ReceiptItem()
-                },
+                Facts = new List<Fact> { new Fact("주문번호", $"{orderData.OrderNum }") }, //order number DB 연결?
+                Items = ItemList,
+                Total = $"{orderData.Price}원"
             };
-
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(receiptCard.ToAttachment()),cancellationToken);
+            /*
             var Sandwich = $"{orderData.Bread}\r\n{orderData.Menu}\r\n";
             //야채
             for (int i = 0; i < orderData.Vege.Count; i++)
@@ -235,7 +263,7 @@ namespace SWMproject.Dialogs
             }
             msg += $"\r\n요구사항:{orderData.Requirement}";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
-
+            */
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is the end.
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
