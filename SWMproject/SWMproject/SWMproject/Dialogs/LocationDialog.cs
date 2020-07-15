@@ -72,9 +72,8 @@ namespace SWMproject.Dialogs
                 string phone = jobj["phone"].ToString();
                 string address_name = jobj["address_name"].ToString();
 
-                string x = jobj["x"].ToString();
-                string y = jobj["y"].ToString();
-                string kakaoUrl = "https://map.kakao.com/link/to/"+place_name+","+ x+","+y;
+                string id = jobj["id"].ToString();
+                string kakaoUrl = "https://map.kakao.com/link/to/"+id;
 
                 var heroCard = new HeroCard
                 {
