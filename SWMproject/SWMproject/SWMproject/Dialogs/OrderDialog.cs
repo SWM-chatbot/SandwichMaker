@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
-using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using SWMproject.Data;
 
@@ -133,7 +131,6 @@ namespace SWMproject.Dialogs
             orderData.AddiOrder = new List<string>();
 
             return await stepContext.BeginDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
-        
         }
 
         private static async Task<DialogTurnResult> WarmupStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)

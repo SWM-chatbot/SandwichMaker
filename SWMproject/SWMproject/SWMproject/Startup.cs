@@ -34,10 +34,10 @@ namespace SWMproject
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            services.AddSingleton<OrderDialog>();
+            services.AddSingleton<LocationDialog>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogAndWelcomeBot<OrderDialog>>();
+            services.AddTransient<IBot, DialogAndWelcomeBot<LocationDialog>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
