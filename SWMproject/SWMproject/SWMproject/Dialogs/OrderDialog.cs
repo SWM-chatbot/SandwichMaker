@@ -195,8 +195,6 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            orderData.SetMenu = (string)stepContext.Values["setmenu"];
-
             if ((string)stepContext.Values["setmenu"] != "단품")
             {
                 stepContext.Values["setdrink"] = ((FoundChoice)stepContext.Result).Value;
@@ -206,6 +204,7 @@ namespace SWMproject.Dialogs
             Sandwich sandwich = new Sandwich(orderData.Menu,orderData.Bread,orderData.Cheese,orderData.Warmup,orderData.Topping,orderData.Vege,orderData.Sauce,orderData.SetMenu,orderData.SetDrink);
             
             orderData.Sandwiches.Add(sandwich);
+            orderData.Num++;
             
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
@@ -265,6 +264,7 @@ namespace SWMproject.Dialogs
             }
 
             ItemList.Add(new ReceiptItem("요구사항", subtitle: $"{orderData.Requirement}"));
+            ItemList.Add(new ReceiptItem("총 주문 개수", price: orderData.Num.ToString() + "개"));
             ItemList.Add(new ReceiptItem("==========================="));
 
             var receiptCard = new ReceiptCard
