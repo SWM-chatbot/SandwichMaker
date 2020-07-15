@@ -9,6 +9,9 @@ namespace SWMproject.Data
     {
         public int OrderNum { get; set; } = 0;
         public int Price { get; set; }
+        public int Num { get; set; }
+        public bool Initial { get; set; } = true;
+        public List<Sandwich> Sandwiches { get; set; }
 
         //2. 메뉴 선택
         public string Menu { get; set; }

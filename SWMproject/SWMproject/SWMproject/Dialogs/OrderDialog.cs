@@ -22,6 +22,7 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
+                InitialStepAsync,
                 //2 빵
                 BreadStepAsync,
                 //3 메뉴
@@ -35,7 +36,7 @@ namespace SWMproject.Dialogs
                 SetMenuAddiStepAsync,
                 SetMenuDrinkStepAsync,
                 //단품 추가
-
+                AddiStepAsync,
                 //9 추가 요구사항
                 RequirementStepAsync,
                 //10 주문내역
@@ -54,6 +55,21 @@ namespace SWMproject.Dialogs
         }
 
         //async 정의
+        private async Task<DialogTurnResult> InitialStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            if (orderData.Initial)
+            {
+                orderData.Num = 0;
+                orderData.Sandwiches = new List<Sandwich>();
+                orderData.Price = 0;
+                orderData.Initial = false;
+
+                return await stepContext.NextAsync();
+            }
+            else return await stepContext.NextAsync();
+        }
         private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
@@ -83,27 +99,28 @@ namespace SWMproject.Dialogs
 
         private async Task<DialogTurnResult> ShowToppingStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
 
-            //치즈 카드 보여주기
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text("치즈 종류입니다"), cancellationToken);
-            await stepContext.Context.SendActivityAsync(Cards.GetCard("cheese"), cancellationToken);
+            if (orderData.Initial)
+            {
+                //치즈 카드 보여주기
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("치즈 종류입니다"), cancellationToken);
+                await stepContext.Context.SendActivityAsync(Cards.GetCard("cheese"), cancellationToken);
 
-            //소스 카드 보여주기
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text("소스 종류입니다"), cancellationToken);
-            await stepContext.Context.SendActivityAsync(Cards.GetCard("sauce"), cancellationToken);
+                //소스 카드 보여주기
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("소스 종류입니다"), cancellationToken);
+                await stepContext.Context.SendActivityAsync(Cards.GetCard("sauce"), cancellationToken);
 
-            //추가 토핑 카드 보여주기
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text("추가 토핑 종류입니다"), cancellationToken);
-            await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
+                //추가 토핑 카드 보여주기
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("추가 토핑 종류입니다"), cancellationToken);
+                await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
-            //입력 tip 
-            var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
-            await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
+                //입력 tip 
+                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
+                await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
+            }
 
-            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
-
-            orderData.Price = 0;
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Price += Topping.menu_price[orderData.Menu];
             orderData.Bread = (string)stepContext.Values["bread"];
@@ -111,6 +128,7 @@ namespace SWMproject.Dialogs
             orderData.Cheese = new List<string>();
             orderData.Sauce = new List<string>();
             orderData.SetMenu = "단품";
+            orderData.SetDrink = "-";
             orderData.Topping = new List<string>();
             orderData.AddiOrder = new List<string>();
 
@@ -173,11 +191,36 @@ namespace SWMproject.Dialogs
                 }, cancellationToken);
         }
 
-        private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> AddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            orderData.SetMenu = (string)stepContext.Values["setmenu"];
+
             if ((string)stepContext.Values["setmenu"] != "단품")
             {
                 stepContext.Values["setdrink"] = ((FoundChoice)stepContext.Result).Value;
+                orderData.SetDrink = (string)stepContext.Values["setdrink"];
+            }
+
+            Sandwich sandwich = new Sandwich(orderData.Menu,orderData.Bread,orderData.Cheese,orderData.Warmup,orderData.Topping,orderData.Vege,orderData.Sauce,orderData.SetMenu,orderData.SetDrink);
+            
+            orderData.Sandwiches.Add(sandwich);
+            
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("주문을 완료하시겠어요?"),
+                    Choices = ChoiceFactory.ToChoices(new List<string> { "네","아니오" }),
+                }, cancellationToken);
+        }
+
+        private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["addiorder"] = ((FoundChoice)stepContext.Result).Value;
+            if ((string)stepContext.Values["addiorder"] != "네")
+            {
+                return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
             }
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
         }
@@ -188,37 +231,42 @@ namespace SWMproject.Dialogs
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            orderData.SetMenu = (string)stepContext.Values["setmenu"];
             orderData.Requirement = (string)stepContext.Values["requirement"];
                 
             orderData.OrderNum++;
             List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image:new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
-            ItemList.Add(new ReceiptItem("메뉴", price: Topping.menu_price[orderData.Menu].ToString() + "원"));
-            foreach (string temp in orderData.Topping)
-            {
-                ItemList.Add(new ReceiptItem(temp, price: Topping.topping_price[temp].ToString()+"원"));
-            }
-            if (orderData.SetMenu != "단품")
-            {
-                orderData.SetDrink = (string)stepContext.Values["setdrink"];
-                ItemList.Add(new ReceiptItem("세트", subtitle:$"{orderData.SetMenu},{orderData.SetDrink}", price: "1900원"));
-                orderData.Price += 1900;
-            }
-            string vege = "";
-            string sauce = "";
-            foreach(string temp in orderData.Vege)
-            {
-                vege += temp + ",";
-            }
-            foreach(string temp in orderData.Sauce)
-            {
-                sauce += temp + ",";
-            }
-            ItemList.Add(new ReceiptItem("야채", subtitle: vege));
-            ItemList.Add(new ReceiptItem("소스", subtitle: sauce));
-            ItemList.Add(new ReceiptItem("요구사항", subtitle:$"{orderData.Requirement}"));
             ItemList.Add(new ReceiptItem("-----------------------------------"));
-            
+
+            foreach (Sandwich tmpSand in orderData.Sandwiches)
+            {
+                ItemList.Add(new ReceiptItem("메뉴", price: Topping.menu_price[tmpSand.Menu].ToString() + "원"));
+                foreach (string temp in tmpSand.Topping)
+                {
+                    ItemList.Add(new ReceiptItem(temp, price: Topping.topping_price[temp].ToString() + "원"));
+                }
+                if (orderData.SetMenu != "단품")
+                {
+                    ItemList.Add(new ReceiptItem("세트", subtitle: $"{tmpSand.SetMenu},{tmpSand.SetDrink}", price: "1900원"));
+                    orderData.Price += 1900;
+                }
+                string vege = "";
+                string sauce = "";
+                foreach (string temp in tmpSand.Vege)
+                {
+                    vege += temp + ",";
+                }
+                foreach (string temp in tmpSand.Sauce)
+                {
+                    sauce += temp + ",";
+                }
+                ItemList.Add(new ReceiptItem("야채", subtitle: vege));
+                ItemList.Add(new ReceiptItem("소스", subtitle: sauce));
+                ItemList.Add(new ReceiptItem("-----------------------------------"));
+            }
+
+            ItemList.Add(new ReceiptItem("요구사항", subtitle: $"{orderData.Requirement}"));
+            ItemList.Add(new ReceiptItem("==========================="));
+
             var receiptCard = new ReceiptCard
             {
                 Title = "Subway receipt",
