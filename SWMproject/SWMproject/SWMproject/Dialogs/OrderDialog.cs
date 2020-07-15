@@ -115,7 +115,7 @@ namespace SWMproject.Dialogs
                 await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
                 //입력 tip 
-                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
+                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다. \r\n- ','(콤마)를 이용하여 한번에 많은 토핑을 추가하거나 삭제할 수 있습니다\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
                 await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
             }
 
@@ -231,7 +231,7 @@ namespace SWMproject.Dialogs
                 
             orderData.OrderNum++;
             List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image:new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
-            ItemList.Add(new ReceiptItem("-----------------------------------"));
+            ItemList.Add(new ReceiptItem("==========================="));
 
             foreach (Sandwich tmpSand in orderData.Sandwiches)
             {

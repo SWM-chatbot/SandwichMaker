@@ -37,7 +37,7 @@ namespace SWMproject.Dialogs
         }
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            var msg = "주문 할 서브웨이 지점을 선택하세요! \r\n서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
+            var msg = "서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(msg) };
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
         }
@@ -93,6 +93,7 @@ namespace SWMproject.Dialogs
                 };
                 reply.Attachments.Add(heroCard.ToAttachment());
             }
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문할 서브웨이 지점을 선택하세요"), cancellationToken);
             await stepContext.Context.SendActivityAsync(reply, cancellationToken);
             return await stepContext.PromptAsync(nameof(ChoicePrompt), 
                 new PromptOptions
