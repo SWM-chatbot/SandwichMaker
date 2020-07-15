@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SWMproject.Data
 {
-    public class OrderData
+    public class Sandwich
     {
-        public int OrderNum { get; set; } = 0;
-        public int Price { get; set; }
-        public int Num { get; set; }
-        public bool Initial { get; set; } = true;
-        public List<Sandwich> Sandwiches { get; set; }
-
-        //2. 메뉴 선택
         public string Menu { get; set; }
         //3. 빵 선택
         public string Bread { get; set; }
@@ -30,10 +24,11 @@ namespace SWMproject.Data
         //8. 세트 선택
         public string SetMenu { get; set; }
         public string SetDrink { get; set; }
-        //단품
-        public List<string> AddiOrder { get; set; }
-        //9. 요구사항
-        public string Requirement { get; set; }
 
+
+        public Sandwich(string menu,string bread,List<string> cheese, bool warmup, List<string> topping,List<string> vege,List<string> sauce ,string setMenu,string setDrink) 
+        {
+            this.Menu = menu; this.Bread = bread; this.Cheese = cheese; this.Warmup = warmup; this.Topping = topping; this.Vege = vege; this.Sauce = sauce; this.SetMenu = setMenu; this.SetDrink = setDrink;
+        }
     }
 }
