@@ -102,7 +102,7 @@ namespace SWMproject
                         Subtitle = "Chicken Teriyaki 370kcal",
                         Text = "담백한 치킨 스트립에 달콤짭쪼름한 써브웨이 특제 데리야끼 소스와의 환상적인 만남",
                         Images = new List<CardImage> { new CardImage("https://m.subway.co.kr/images/menu/sandwich_pm07.jpg") },
-                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "머스타드") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, "선택", value: "치킨 데리야끼") },
                     };
                     break;
                 case 10:

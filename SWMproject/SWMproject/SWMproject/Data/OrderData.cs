@@ -8,6 +8,7 @@ namespace SWMproject.Data
     public class OrderData
     {
         public int OrderNum { get; set; } = 0;
+        public string location { get; set; }
         public int Price { get; set; }
         public int Num { get; set; }
         public bool Initial { get; set; } = true;

@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
 using SWMproject.Data;
 using Newtonsoft.Json.Linq;
-using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
 
@@ -25,21 +25,24 @@ namespace SWMproject.Dialogs
             {
                 UserInputStepAsync,
                 FindShopStepAsync,
+                ConfirmStepAsync
             };
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
+            AddDialog(new OrderDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
+            AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
         }
-        private async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var msg = "주문 할 서브웨이 지점을 선택하세요! \r\n서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(msg) };
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> FindShopStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private static async Task<DialogTurnResult> FindShopStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             string Input = (string)stepContext.Result;
 
@@ -66,11 +69,13 @@ namespace SWMproject.Dialogs
             var reply = MessageFactory.Attachment(attachments);
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
+            List<string> places = new List<string>();
             foreach (JObject jobj in array)
             {
                 string place_name = jobj["place_name"].ToString();
                 string phone = jobj["phone"].ToString();
                 string address_name = jobj["address_name"].ToString();
+                places.Add(place_name);
 
                 string id = jobj["id"].ToString();
                 string kakaoUrl = "https://map.kakao.com/link/to/"+id;
@@ -83,12 +88,22 @@ namespace SWMproject.Dialogs
                     Buttons = new List<CardAction>
                     {
                         new CardAction(ActionTypes.OpenUrl,value: kakaoUrl,title:"카카오맵에서 확인하기"),
-                        new CardAction(ActionTypes.ImBack, "여기서 주문하기", value: "선택")
+                        new CardAction(ActionTypes.PostBack, "여기서 주문하기", value: place_name)
                     },
                 };
                 reply.Attachments.Add(heroCard.ToAttachment());
             }
             await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+            return await stepContext.PromptAsync(nameof(ChoicePrompt), 
+                new PromptOptions
+                {
+                    Choices = ChoiceFactory.ToChoices(places),
+                }, cancellationToken);
+        }
+        private async Task<DialogTurnResult> ConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+            orderData.location = ((FoundChoice)stepContext.Result).Value;
             return await stepContext.BeginDialogAsync(nameof(OrderDialog), null, cancellationToken);
         }
 

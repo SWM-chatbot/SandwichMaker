@@ -79,7 +79,7 @@ namespace SWMproject.Dialogs
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("메뉴를 선택해주세요."),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "쉬림프", "로티세리 바비큐 치킨", "폴드포크", "에그마요","이탈리안 비엠티","비엘티","미트볼","햄","참치","로스트 치킨","터키","베지","써브웨이 클럽","스테이크 & 치즈","스파이시 이탈리안","치킨 데리야끼" }),
+                   Choices = ChoiceFactory.ToChoices(Topping.menu),
                }, cancellationToken);
         }
         
@@ -91,7 +91,7 @@ namespace SWMproject.Dialogs
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("빵을 선택해주세요."),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "허니오트", "하티", "파마산 오레가노", "화이트","플랫브래드","위트" }),
+                   Choices = ChoiceFactory.ToChoices(Topping.bread),
                }, cancellationToken);
         }
 
@@ -122,7 +122,7 @@ namespace SWMproject.Dialogs
             orderData.Menu = (string)stepContext.Values["menu"];
             orderData.Price += Topping.menu_price[orderData.Menu];
             orderData.Bread = (string)stepContext.Values["bread"];
-            orderData.Vege = new List<string> { "토마토", "올리브", "양상추", "양파", "파프리카", "오이", "피망", "피클", "할라피뇨" };
+            orderData.Vege = Topping.vege;
             orderData.Cheese = new List<string>();
             orderData.Sauce = new List<string>();
             orderData.SetMenu = "단품";
@@ -167,7 +167,7 @@ namespace SWMproject.Dialogs
                 new PromptOptions
                 {
                    Prompt = MessageFactory.Text("세트 메뉴를 골라주세요"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> {"더블 초코칩쿠키","초코칩쿠키","오트밀 레이즌쿠키","라즈베리 치즈케익쿠키","화이트 초코 마카다미아쿠키","칩"}),
+                   Choices = ChoiceFactory.ToChoices(Topping.cookie),
                 }, cancellationToken);
             }
 
@@ -184,7 +184,7 @@ namespace SWMproject.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("세트 음료를 골라주세요"),
-                    Choices = ChoiceFactory.ToChoices(new List<string> { "콜라","사이다","닥터 페퍼" }),
+                    Choices = ChoiceFactory.ToChoices(Topping.drink),
                 }, cancellationToken);
         }
 
@@ -206,7 +206,7 @@ namespace SWMproject.Dialogs
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("주문을 완료하시겠어요?"),
+                    Prompt = MessageFactory.Text("다른 샌드위치를 추가하시겠어요?"),
                     Choices = ChoiceFactory.ToChoices(new List<string> { "네","아니오" }),
                 }, cancellationToken);
         }
@@ -214,7 +214,7 @@ namespace SWMproject.Dialogs
         private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["addiorder"] = ((FoundChoice)stepContext.Result).Value;
-            if ((string)stepContext.Values["addiorder"] != "네")
+            if ((string)stepContext.Values["addiorder"] != "아니오")
             {
                 return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
             }
@@ -267,49 +267,14 @@ namespace SWMproject.Dialogs
             var receiptCard = new ReceiptCard
             {
                 Title = "Subway receipt",
-                Facts = new List<Fact> { new Fact("주문번호", $"{orderData.OrderNum }") }, //order number DB 연결?
+                Facts = new List<Fact> { new Fact("주문번호", $"{orderData.OrderNum }"), new Fact("주문지점",$"{orderData.location}") }, //order number DB 연결?
                 Items = ItemList,
                 Total = $"{orderData.Price}원"
             };
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("주문 내역을 확인해주세요."), cancellationToken);
             await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(receiptCard.ToAttachment()),cancellationToken);
-            /*
-            var Sandwich = $"{orderData.Bread}\r\n{orderData.Menu}\r\n";
-            //야채
-            for (int i = 0; i < orderData.Vege.Count; i++)
-            {
-                Sandwich += $"{orderData.Vege[i]} ";
-            }
-            Sandwich += $"\r\n";
-            //치즈
-            for (int i = 0; i < orderData.Cheese.Count; i++)
-            {
-                Sandwich += $"{orderData.Cheese[i]} ";
-            }
-            Sandwich += $"\r\n";
-            //소스
-            for (int i = 0; i < orderData.Sauce.Count; i++)
-            {
-                Sandwich += $"{orderData.Sauce[i]} ";
-            }
-            Sandwich += $"\r\n";
-            //추가토핑
-            for (int i = 0; i < orderData.Topping.Count; i++)
-            {
-                Sandwich += $"{orderData.Topping[i]} ";
-            }
-            Sandwich += $"\r\n{orderData.Bread}";
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(Sandwich), cancellationToken);
-            var msg = "";
-            if (orderData.SetMenu!="단품")
-            {
-                orderData.SetDrink = (string)stepContext.Values["setdrink"];
-                msg += $"\r\n세트음료:{orderData.SetDrink}";
-            }
-            msg += $"\r\n요구사항:{orderData.Requirement}";
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg), cancellationToken);
-            */
-            // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is the end.
+
+            orderData.Initial = true;
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
     }
