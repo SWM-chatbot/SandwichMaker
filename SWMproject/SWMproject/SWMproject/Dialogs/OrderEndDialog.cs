@@ -96,6 +96,7 @@ namespace SWMproject.Dialogs
                 containerProperties,
                 throughput: 1000);
 
+            //한사람이 여러개를 주문한 경우, 각각의 샌드위치마다 ID값을 증가시키며 데이터 삽입
             foreach(Sandwich tempSand in orderData.Sandwiches)
             {
                 string sJson = JsonConvert.SerializeObject(tempSand);
@@ -104,6 +105,7 @@ namespace SWMproject.Dialogs
                 await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
             }
 
+            //OrderNum 데이터 업데이트 (삭제 후 새로 삽입)
             ItemResponse<OrderNumber> response = await container.DeleteItemAsync<OrderNumber>(
             partitionKey: new PartitionKey("0"),
             id: "OrderNum");
