@@ -96,7 +96,7 @@ namespace SWMproject.Dialogs
                         new PromptOptions
                         {
                             Prompt = MessageFactory.Text("치즈 혹은 소스가 선택되지 않았어요. 이대로 주문할까요?"),
-                            Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
+                            Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요", "주문 취소" }),
                         }, cancellationToken);
                     }
                     else
@@ -105,7 +105,7 @@ namespace SWMproject.Dialogs
                             new PromptOptions
                             {
                                 Prompt = MessageFactory.Text("이대로 주문할까요?"), //confirm factory 확인해보고 코드 수정하기?
-                                Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요" }),
+                                Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요", "주문 취소" }),
                             }, cancellationToken);
                     }
                 }
@@ -210,6 +210,8 @@ namespace SWMproject.Dialogs
             var responce = ((FoundChoice)stepContext.Result).Value;
             if(responce == "아니요")
                 return await stepContext.ReplaceDialogAsync(nameof(AddToppingDialog), null, cancellationToken);
+            else if(responce == "주문 취소")
+                return await stepContext.EndDialogAsync(result: "주문 취소", cancellationToken);
             else return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
