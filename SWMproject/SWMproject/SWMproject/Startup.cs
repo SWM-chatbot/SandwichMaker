@@ -9,24 +9,43 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Bot.Builder.Azure;
 
 using SWMproject.Bots;
 using SWMproject.Dialogs;
+using Microsoft.Extensions.Configuration;
 
 namespace SWMproject
 {
     public class Startup
     {
+        private IConfiguration _configuration;
+        public Startup(IConfiguration iconfig)
+        {
+            _configuration = iconfig;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
+            // Use partitioned CosmosDB for storage, instead of in-memory storage.
+            services.AddSingleton<IStorage>(
+                new CosmosDbPartitionedStorage(
+                    new CosmosDbPartitionedStorageOptions
+                    {
+                        CosmosDbEndpoint = _configuration.GetValue<string>("CosmosDbEndpoint"),
+                        AuthKey = _configuration.GetValue<string>("CosmosDbAuthKey"),
+                        DatabaseId = _configuration.GetValue<string>("CosmosDbDatabaseId"),
+                        ContainerId = _configuration.GetValue<string>("CosmosDbContainerId"),
+                        CompatibilityMode = false,
+                    }));
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
-            services.AddSingleton<IStorage, MemoryStorage>();
+            //services.AddSingleton<IStorage, MemoryStorage>();
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();

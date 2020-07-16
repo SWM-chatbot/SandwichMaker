@@ -9,15 +9,16 @@ using Azure;
 using System;
 using Azure.AI.TextAnalytics;
 using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
 
 namespace SWMproject.Dialogs
 {
     public class AddToppingDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
-        //key같은거 깃헙에 올릴때 가려서 올리기!!
-        private static readonly AzureKeyCredential credentials = new AzureKeyCredential("805fa0ee93384dbf8524ffbc66d393e1");
-        private static readonly Uri endpoint = new Uri("https://team20-ta.cognitiveservices.azure.com/");
+        
+        private static AzureKeyCredential credentials= new AzureKeyCredential("805fa0ee93384dbf8524ffbc66d393e1");
+        private static Uri endpoint = new Uri("https://team20-ta.cognitiveservices.azure.com/");
 
         static Response<KeyPhraseCollection> KeyPhraseExtraction(TextAnalyticsClient client,string input)
         {
@@ -36,6 +37,7 @@ namespace SWMproject.Dialogs
         public AddToppingDialog(UserState userState) : base(nameof(AddToppingDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
+
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {

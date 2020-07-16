@@ -10,16 +10,22 @@ using SWMproject.Data;
 using Newtonsoft.Json.Linq;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
+using Microsoft.Azure.Cosmos;
 
 namespace SWMproject.Dialogs
 {
     public class LocationDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
-        
+        private static Database database = null;
+        private static Container container = null;
+        private static readonly string databaseId = "test";
+        private static readonly string containerId = "container1";
+
         public LocationDialog(UserState userState) : base(nameof(LocationDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
+
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
@@ -35,8 +41,29 @@ namespace SWMproject.Dialogs
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
         }
+
+        private static async Task Initialize()
+        {
+            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
+            var note = new DBdata { id = "테스트", Contents = "eggs,토마토,우하하", ETag = "x", AccountNumber="123123" };
+
+            // Delete the existing container to prevent create item conflicts
+            using (await database.GetContainer(containerId).DeleteContainerStreamAsync())
+            { }
+
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            // Create with a throughput of 1000 RU/s
+            container = await database.CreateContainerIfNotExistsAsync(
+                containerProperties,
+                throughput: 1000);
+
+            await container.CreateItemAsync<DBdata>(note,new PartitionKey(note.AccountNumber));
+        }
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            await Initialize();
+            
             var msg = "서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(msg) };
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
