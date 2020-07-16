@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
+using Newtonsoft.Json;
 using SWMproject.Data;
 
 namespace SWMproject.Dialogs
@@ -11,6 +13,10 @@ namespace SWMproject.Dialogs
     public class OrderEndDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
+        private static Database database = null;
+        private static Container container = null;
+        private static readonly string databaseId = "test";
+        private static readonly string containerId = "container1";
         public OrderEndDialog(UserState userState) : base(nameof(OrderEndDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
@@ -18,7 +24,8 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
-                SummaryStepAsync
+                SummaryStepAsync,
+                DataUpdateStepAsync
             };
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             InitialDialogId = nameof(WaterfallDialog);
@@ -28,7 +35,6 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            orderData.OrderNum++;
             List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image: new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
             ItemList.Add(new ReceiptItem("-----------------------------------"));
 
@@ -74,7 +80,38 @@ namespace SWMproject.Dialogs
             await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(receiptCard.ToAttachment()), cancellationToken);
 
             orderData.Initial = true;
-            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+            return await stepContext.NextAsync();
+        }
+
+        private async Task<DialogTurnResult> DataUpdateStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
+
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            // Create with a throughput of 1000 RU/s
+            container = await database.CreateContainerIfNotExistsAsync(
+                containerProperties,
+                throughput: 1000);
+
+            foreach(Sandwich tempSand in orderData.Sandwiches)
+            {
+                string sJson = JsonConvert.SerializeObject(tempSand);
+                var dbData = new DBdata { id = $"{orderData.OrderNum++}", Contents = tempSand, ETag = "x", AccountNumber = "1" };
+                
+                await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
+            }
+
+            ItemResponse<OrderNumber> response = await container.DeleteItemAsync<OrderNumber>(
+            partitionKey: new PartitionKey("0"),
+            id: "OrderNum");
+
+            OrderNumber orderNumber = new OrderNumber(orderData.OrderNum);
+            await container.CreateItemAsync(orderNumber, new PartitionKey("0"));
+
+            return await stepContext.EndDialogAsync();
         }
     }
 }

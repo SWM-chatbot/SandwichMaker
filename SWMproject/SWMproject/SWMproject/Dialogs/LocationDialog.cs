@@ -11,9 +11,25 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json;
+using System;
 
 namespace SWMproject.Dialogs
 {
+    public class OrderNumber
+    {
+        public string id { get; set; }
+        public string AccountNumber { get; set; } 
+        public int value { get; set; }
+
+        public OrderNumber(int value) 
+        {
+            this.id = "OrderNum";
+            this.AccountNumber = "0";
+            this.value = value;
+        }
+    }
+
     public class LocationDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
@@ -21,6 +37,7 @@ namespace SWMproject.Dialogs
         private static Container container = null;
         private static readonly string databaseId = "test";
         private static readonly string containerId = "container1";
+        private static OrderNumber orderNumber = null;
 
         public LocationDialog(UserState userState) : base(nameof(LocationDialog))
         {
@@ -46,11 +63,6 @@ namespace SWMproject.Dialogs
         {
             CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
             database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
-            var note = new DBdata { id = "테스트", Contents = "eggs,토마토,우하하", ETag = "x", AccountNumber="123123" };
-
-            // Delete the existing container to prevent create item conflicts
-            using (await database.GetContainer(containerId).DeleteContainerStreamAsync())
-            { }
 
             ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
             // Create with a throughput of 1000 RU/s
@@ -58,7 +70,10 @@ namespace SWMproject.Dialogs
                 containerProperties,
                 throughput: 1000);
 
-            await container.CreateItemAsync<DBdata>(note,new PartitionKey(note.AccountNumber));
+            ItemResponse<OrderNumber> response = await container.ReadItemAsync<OrderNumber>(
+                partitionKey: new PartitionKey("0"),
+                id: "OrderNum");
+            orderNumber = (OrderNumber)response;
         }
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -132,6 +147,7 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             orderData.location = ((FoundChoice)stepContext.Result).Value;
+            orderData.OrderNum = orderNumber.value;
             return await stepContext.BeginDialogAsync(nameof(OrderDialog), null, cancellationToken);
         }
 
