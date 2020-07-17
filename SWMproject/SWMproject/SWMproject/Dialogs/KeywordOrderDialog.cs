@@ -98,6 +98,11 @@ namespace SWMproject.Dialogs
         {
             string keyword = stepContext.Result.ToString();
             await GetKeyword(ipAddr,keyword,stepContext);
+            if (my_sandwich == null)
+            {
+                await stepContext.Context.SendActivityAsync("키워드가 없습니다!");
+                return await stepContext.ReplaceDialogAsync(nameof(KeywordOrderDialog), null, cancellationToken);
+            }
 
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             orderData.Price += Topping.menu_price[my_sandwich.Menu];
