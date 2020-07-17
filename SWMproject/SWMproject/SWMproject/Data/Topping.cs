@@ -23,7 +23,8 @@ namespace SWMproject.Data
         public static Dictionary<string,int> menu_price = new Dictionary<string, int> { { "쉬림프", 5500 }, { "로티세리 바비큐 치킨", 5900 },{ "폴드포크", 5900 }, { "에그마요", 4300 }, { "이탈리안 비엠티", 5100 }, { "비엘티", 5100 }, { "미트볼", 5100 }, { "햄", 4700 },{ "치킨 데리야끼", 5600 }, { "참치", 4800 },{ "로스트 치킨", 5900 }, { "써브웨이 클럽", 5600 }, { "터키", 5100 },{ "베지", 3900 },{ "스테이크 & 치즈", 6400 }, { "스파이시 이탈리안", 5600 } };
         //추가토핑
         public static Dictionary<string,int> topping_price = new Dictionary<string, int> { { "미트 추가", 1800 }, { "베이컨 비츠", 900 }, { "쉬림프 더블업", 1800 }, { "에그마요", 1600 }, { "오믈렛", 1200 }, { "아보카도", 1300 }, { "베이컨", 900 }, { "페퍼로니", 900 }, { "치즈 추가", 900 } };
-        
+        //추천 소스
+        public static Dictionary<string, List<string>> sauce_recommand = new Dictionary<string, List<string>> { { "쉬림프", new List<string>{"스위트 칠리","랜치드레싱","핫칠리"} }, { "로티세리 바비큐 치킨", new List<string> { "스위트 칠리", "유자 폰즈" } }, { "폴드포크", new List<string> { "스모크 바비큐" } }, { "에그마요", new List<string> { "랜치드레싱","스위트 칠리" } }, { "이탈리안 비엠티", new List<string> { "랜치드레싱", "스위트 어니언", "핫칠리" } }, { "비엘티", new List<string> { "스위트 칠리", "랜치드레싱", "사우스 웨스트" } }, { "미트볼", new List<string> {} }, { "햄", new List<string> { "허니 머스타드" } }, { "치킨 데리야끼", new List<string> { "스위트 칠리", "스모크 바비큐" } }, { "참치", new List<string> { "스위트 칠리","핫칠리" } }, { "로스트 치킨", new List<string> { "스위트 어니언" } }, { "써브웨이 클럽", new List<string> { "랜치드레싱","스위트 어니언","사우스 웨스트" } }, { "터키", new List<string> { "스위트 어니언", "랜치드레싱", "사우스 웨스트" } }, { "베지", new List<string> { "레드와인식초" } }, { "스테이크 & 치즈", new List<string> { "사우스 웨스트","스모크 바비큐" } }, { "스파이시 이탈리안", new List<string> {"랜치드레싱", "핫칠리" } } };
         
     }
 }
