@@ -116,8 +116,7 @@ namespace SWMproject.Dialogs
                 await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
                 //입력 tip 
-                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다. \r\n- ','(콤마)를 이용하여 한번에 많은 토핑을 추가하거나 삭제할 수 있습니다\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '추천소스'를 통해 홈페이지에서 제공하는 메뉴별 추천소스를 확인할 수 있습니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
-                await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
+                await stepContext.Context.SendActivityAsync(Cards.GetCard("inputTip"), cancellationToken);
             }
 
             orderData.Menu = (string)stepContext.Values["menu"];
