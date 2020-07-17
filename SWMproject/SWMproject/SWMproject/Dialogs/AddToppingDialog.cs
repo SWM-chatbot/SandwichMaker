@@ -84,6 +84,10 @@ namespace SWMproject.Dialogs
             {
                 isAdding = false;
             }
+            if (topping.Contains("?"))
+            {
+                topping += ",가이드";
+            }
 
             var client = new TextAnalyticsClient(endpoint, credentials);
             var response = KeyPhraseExtraction(client, topping);
@@ -98,7 +102,7 @@ namespace SWMproject.Dialogs
                         new PromptOptions
                         {
                             Prompt = MessageFactory.Text("치즈 혹은 소스가 선택되지 않았어요. 이대로 주문할까요?"),
-                            Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요", "주문 취소" }),
+                            Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오", "주문 취소" }),
                         }, cancellationToken);
                     }
                     else
@@ -107,7 +111,7 @@ namespace SWMproject.Dialogs
                             new PromptOptions
                             {
                                 Prompt = MessageFactory.Text("이대로 주문할까요?"), //confirm factory 확인해보고 코드 수정하기?
-                                Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니요", "주문 취소" }),
+                                Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오", "주문 취소" }),
                             }, cancellationToken);
                     }
                 }
@@ -132,7 +136,7 @@ namespace SWMproject.Dialogs
                     await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
                 }
                 //가이드
-                else if (pharase.Contains("가이드") || pharase.Contains("?") || pharase.Contains("help"))
+                else if (pharase.Contains("가이드") || pharase.Contains("help"))
                 {
                     var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다.\r\n- ','(콤마)를 이용하여 한번에 많은 토핑을 추가하거나 삭제할 수 있습니다\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
                     await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
@@ -203,14 +207,13 @@ namespace SWMproject.Dialogs
                     }
                 }
             }
-
-                return await stepContext.ReplaceDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
+            return await stepContext.ReplaceDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
         }
 
         private static async Task<DialogTurnResult> ResponceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var responce = ((FoundChoice)stepContext.Result).Value;
-            if(responce == "아니요")
+            if(responce == "아니오")
                 return await stepContext.ReplaceDialogAsync(nameof(AddToppingDialog), null, cancellationToken);
             else if(responce == "주문 취소")
                 return await stepContext.EndDialogAsync(result: "주문 취소", cancellationToken);
