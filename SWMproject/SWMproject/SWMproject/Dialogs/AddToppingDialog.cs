@@ -145,7 +145,7 @@ namespace SWMproject.Dialogs
                 else if (pharase.Contains("추천소스"))
                 {
                     var sauceRecommendMsg = $"홈페이지에서 제공하는 {orderData.Menu}의 추천 소스는 [";
-                    foreach(string sauce in Topping.sauce_recommand[orderData.Menu])
+                    foreach(string sauce in Topping.sauce_recommend[orderData.Menu])
                     {
                         sauceRecommendMsg += $"{sauce}, ";
                     }
