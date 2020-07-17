@@ -61,11 +61,9 @@ namespace SWMproject.Dialogs
                 orderData.Num = 0;
                 orderData.Sandwiches = new List<Sandwich>();
                 orderData.Price = 0;
-                orderData.Initial = false;
-
-                return await stepContext.NextAsync();
+                //orderData.Initial = false;
             }
-            else return await stepContext.NextAsync();
+            return await stepContext.NextAsync();
         }
         private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -204,6 +202,7 @@ namespace SWMproject.Dialogs
             if ((string)stepContext.Values["setmenu"] != "단품")
             {
                 stepContext.Values["setdrink"] = ((FoundChoice)stepContext.Result).Value;
+                orderData.SetMenu = (string)stepContext.Values["setmenu"];
                 orderData.SetDrink = (string)stepContext.Values["setdrink"];
             }
 
@@ -220,11 +219,13 @@ namespace SWMproject.Dialogs
                 }, cancellationToken);
         }
 
-        private static async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             stepContext.Values["addiorder"] = ((FoundChoice)stepContext.Result).Value;
-            if ((string)stepContext.Values["addiorder"] != "아니오")
+            if ((string)stepContext.Values["addiorder"] == "네")
             {
+                orderData.Initial = false;
                 return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
             }
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
