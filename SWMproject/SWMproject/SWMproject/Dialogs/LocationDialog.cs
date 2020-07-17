@@ -72,6 +72,12 @@ namespace SWMproject.Dialogs
             var reply = MessageFactory.Attachment(attachments);
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
+            if(array.Count==0)
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("입력이 잘못되었거나 주변 서브웨이가 존재하지 않습니다!"), cancellationToken);
+                return await stepContext.ReplaceDialogAsync(nameof(LocationDialog), null, cancellationToken);
+            }
+
             List<string> places = new List<string>();
             foreach (JObject jobj in array)
             {
