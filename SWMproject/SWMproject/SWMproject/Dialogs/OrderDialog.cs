@@ -32,6 +32,9 @@ namespace SWMproject.Dialogs
                 SetMenuStepAsync,
                 SetMenuAddiStepAsync,
                 SetMenuDrinkStepAsync,
+                // 조합 저장
+                AddMySandwichStepAsync,
+                MySandwichResponceStepAsync,
                 //단품 추가
                 AddiStepAsync,
                 //9 추가 요구사항
@@ -42,6 +45,7 @@ namespace SWMproject.Dialogs
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
             AddDialog(new AddToppingDialog(userState));
             AddDialog(new OrderEndDialog(userState));
+            AddDialog(new AddMySandwichDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
@@ -112,7 +116,7 @@ namespace SWMproject.Dialogs
                 await stepContext.Context.SendActivityAsync(Cards.GetCard("topping"), cancellationToken);
 
                 //입력 tip 
-                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다. \r\n- ','(콤마)를 이용하여 한번에 많은 토핑을 추가하거나 삭제할 수 있습니다\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
+                var tipMsg = MessageFactory.Text("[입력 TIP] \r\n- 기본적으로 모든 야채가 추가되어 있습니다.\r\n- 제외할 토핑은 '-'(빼기)와 토핑이름을 입력하면 추가되어 있던 토핑이 빠집니다.\r\n- 많이 넣고 싶은 토핑은 토핑이름을 입력하면 토핑이 추가됩니다. \r\n- ','(콤마)를 이용하여 한번에 많은 토핑을 추가하거나 삭제할 수 있습니다\r\n- '토핑종류'를 입력하면 토핑 카드를 다시 보여줍니다.\r\n- '추천소스'를 통해 홈페이지에서 제공하는 메뉴별 추천소스를 확인할 수 있습니다.\r\n- '완성'을 입력하면 토핑추가가 종료됩니다.\r\n- '?','가이드','help'를 입력하면 입력 TIP이 다시 출력됩니다.");
                 await stepContext.Context.SendActivityAsync(tipMsg, cancellationToken);
             }
 
@@ -150,9 +154,12 @@ namespace SWMproject.Dialogs
                }, cancellationToken);
         }
 
-        private static async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> SetMenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
             stepContext.Values["warmup"] = ((FoundChoice)stepContext.Result).Value;
+            if ((string)stepContext.Values["warmup"] == "네") orderData.Warmup = true;
 
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
@@ -195,7 +202,7 @@ namespace SWMproject.Dialogs
                 }, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> AddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> AddMySandwichStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
@@ -214,11 +221,28 @@ namespace SWMproject.Dialogs
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("다른 샌드위치를 추가하시겠어요?"),
+                    Prompt = MessageFactory.Text("지금 주문한 샌드위치 조합 저장할까요?"),
                     Choices = ChoiceFactory.ToChoices(new List<string> { "네","아니오" }),
                 }, cancellationToken);
         }
-
+        private async Task<DialogTurnResult> MySandwichResponceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            if (((FoundChoice)stepContext.Result).Value == "네")
+            {
+                return await stepContext.BeginDialogAsync(nameof(AddMySandwichDialog), null, cancellationToken);
+            }
+            else return await stepContext.NextAsync();
+        }
+        private async Task<DialogTurnResult> AddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("다른 샌드위치를 추가하시겠어요?"),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오" }),
+               }, cancellationToken);
+        }
+           
         private async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
@@ -226,7 +250,7 @@ namespace SWMproject.Dialogs
             if ((string)stepContext.Values["addiorder"] == "네")
             {
                 orderData.Initial = false;
-                return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
+                return await stepContext.ReplaceDialogAsync(nameof(AddMySandwichDialog), null, cancellationToken);
             }
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
         }
