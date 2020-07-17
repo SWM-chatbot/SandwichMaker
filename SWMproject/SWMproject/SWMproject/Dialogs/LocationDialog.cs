@@ -11,33 +11,12 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
-using System;
 
 namespace SWMproject.Dialogs
 {
-    public class OrderNumber
-    {
-        public string id { get; set; }
-        public string AccountNumber { get; set; } 
-        public int value { get; set; }
-
-        public OrderNumber(int value) 
-        {
-            this.id = "OrderNum";
-            this.AccountNumber = "0";
-            this.value = value;
-        }
-    }
-
     public class LocationDialog : ComponentDialog
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
-        private static Database database = null;
-        private static Container container = null;
-        private static readonly string databaseId = "test";
-        private static readonly string containerId = "container1";
-        private static OrderNumber orderNumber = null;
 
         public LocationDialog(UserState userState) : base(nameof(LocationDialog))
         {
@@ -59,26 +38,8 @@ namespace SWMproject.Dialogs
             InitialDialogId = nameof(WaterfallDialog);
         }
 
-        private static async Task Initialize()
-        {
-            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
-            database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
-
-            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
-            // Create with a throughput of 1000 RU/s
-            container = await database.CreateContainerIfNotExistsAsync(
-                containerProperties,
-                throughput: 1000);
-
-            ItemResponse<OrderNumber> response = await container.ReadItemAsync<OrderNumber>(
-                partitionKey: new PartitionKey("0"),
-                id: "OrderNum");
-            orderNumber = (OrderNumber)response;
-        }
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            await Initialize();
-            
+        {    
             var msg = "서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(msg) };
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
@@ -147,7 +108,6 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             orderData.location = ((FoundChoice)stepContext.Result).Value;
-            orderData.OrderNum = orderNumber.value;
             return await stepContext.BeginDialogAsync(nameof(OrderDialog), null, cancellationToken);
         }
 

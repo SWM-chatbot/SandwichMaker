@@ -7,6 +7,9 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using SWMproject.Data;
+using System.Net;
+using System.Net.Sockets;
+using System;
 
 namespace SWMproject.Dialogs
 {
@@ -16,7 +19,7 @@ namespace SWMproject.Dialogs
         private static Database database = null;
         private static Container container = null;
         private static readonly string databaseId = "test";
-        private static readonly string containerId = "container1";
+        private static readonly string containerId = "Order";
         public OrderEndDialog(UserState userState) : base(nameof(OrderEndDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
@@ -96,22 +99,52 @@ namespace SWMproject.Dialogs
                 containerProperties,
                 throughput: 1000);
 
+            //orderNum 가져오기
+            try
+            {
+                FeedIterator<DBdata> feedIterator = container.GetItemQueryIterator<DBdata>("SELECT top 1 * FROM c order by c._ts desc");
+                {
+                    while (feedIterator.HasMoreResults)
+                    {
+                        FeedResponse<DBdata> result = await feedIterator.ReadNextAsync();
+                        foreach (var item in result)
+                        {
+                            orderData.OrderNum = Int32.Parse(item.id) + 1;
+                        }
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                orderData.OrderNum = 0;
+            }
+
+            //ip
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            string ipAddr = string.Empty;
+            for (int i = 0; i < host.AddressList.Length; i++)
+            {
+                if (host.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddr = host.AddressList[i].ToString();
+                }
+            }
+
             //한사람이 여러개를 주문한 경우, 각각의 샌드위치마다 ID값을 증가시키며 데이터 삽입
-            foreach(Sandwich tempSand in orderData.Sandwiches)
+            foreach (Sandwich tempSand in orderData.Sandwiches)
             {
                 string sJson = JsonConvert.SerializeObject(tempSand);
-                var dbData = new DBdata { id = $"{orderData.OrderNum++}", Contents = tempSand, ETag = "x", AccountNumber = "1" };
+                var dbData = new DBdata { id = $"{orderData.OrderNum++}", Contents = tempSand, ETag = "x", AccountNumber = ipAddr };
                 
                 await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
             }
 
             //OrderNum 데이터 업데이트 (삭제 후 새로 삽입)
-            ItemResponse<OrderNumber> response = await container.DeleteItemAsync<OrderNumber>(
-            partitionKey: new PartitionKey("0"),
-            id: "OrderNum");
-
-            OrderNumber orderNumber = new OrderNumber(orderData.OrderNum);
-            await container.CreateItemAsync(orderNumber, new PartitionKey("0"));
+            //ItemResponse<OrderNumber> response = await container.DeleteItemAsync<OrderNumber>(
+            //partitionKey: new PartitionKey("0"),
+            //id: "OrderNum");
+            //OrderNumber orderNumber = new OrderNumber(orderData.OrderNum);
+            //await container.CreateItemAsync(orderNumber, new PartitionKey("0"));
 
             return await stepContext.EndDialogAsync();
         }
