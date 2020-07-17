@@ -52,7 +52,7 @@ namespace SWMproject.Dialogs
         }
 
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {    
+        {
             var msg = "서브웨이를 이용할 주변 역이나 주소를 입력해주세요 (예: 이대역, 서대문구, 아현동)";
             var promptOptions = new PromptOptions { Prompt = MessageFactory.Text(msg) };
             return await stepContext.PromptAsync(nameof(TextPrompt), promptOptions, cancellationToken);
