@@ -139,13 +139,6 @@ namespace SWMproject.Dialogs
                 await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
             }
 
-            //OrderNum 데이터 업데이트 (삭제 후 새로 삽입)
-            //ItemResponse<OrderNumber> response = await container.DeleteItemAsync<OrderNumber>(
-            //partitionKey: new PartitionKey("0"),
-            //id: "OrderNum");
-            //OrderNumber orderNumber = new OrderNumber(orderData.OrderNum);
-            //await container.CreateItemAsync(orderNumber, new PartitionKey("0"));
-
             return await stepContext.EndDialogAsync();
         }
     }
