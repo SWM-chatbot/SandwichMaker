@@ -19,7 +19,6 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
-                InitialStepAsync,
                 //2 빵
                 BreadStepAsync,
                 //3 메뉴
@@ -34,12 +33,7 @@ namespace SWMproject.Dialogs
                 SetMenuDrinkStepAsync,
                 // 조합 저장
                 AddMySandwichStepAsync,
-                MySandwichResponceStepAsync,
-                //단품 추가
-                AddiStepAsync,
-                //9 추가 요구사항
-                RequirementStepAsync,
-                ConfirmStepAsync
+                MySandwichResponceStepAsync
             };
 
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
@@ -56,19 +50,6 @@ namespace SWMproject.Dialogs
         }
 
         //async 정의
-        private async Task<DialogTurnResult> InitialStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
-
-            if (orderData.Initial)
-            {
-                orderData.Num = 0;
-                orderData.Sandwiches = new List<Sandwich>();
-                orderData.Price = 0;
-                //orderData.Initial = false;
-            }
-            return await stepContext.NextAsync();
-        }
         private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
@@ -129,7 +110,6 @@ namespace SWMproject.Dialogs
             orderData.SetMenu = "단품";
             orderData.SetDrink = "-";
             orderData.Topping = new List<string>();
-            orderData.AddiOrder = new List<string>();
 
             return await stepContext.BeginDialogAsync(nameof(AddToppingDialog),null,cancellationToken);
         }
@@ -221,7 +201,7 @@ namespace SWMproject.Dialogs
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("지금 주문한 샌드위치 조합 저장할까요?"),
+                    Prompt = MessageFactory.Text("지금 만든 샌드위치 조합 저장할까요?"),
                     Choices = ChoiceFactory.ToChoices(new List<string> { "네","아니오" }),
                 }, cancellationToken);
         }
@@ -231,37 +211,7 @@ namespace SWMproject.Dialogs
             {
                 return await stepContext.BeginDialogAsync(nameof(AddMySandwichDialog), null, cancellationToken);
             }
-            else return await stepContext.NextAsync();
-        }
-        private async Task<DialogTurnResult> AddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            return await stepContext.PromptAsync(nameof(ChoicePrompt),
-               new PromptOptions
-               {
-                   Prompt = MessageFactory.Text("다른 샌드위치를 추가하시겠어요?"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오" }),
-               }, cancellationToken);
-        }
-           
-        private async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
-            stepContext.Values["addiorder"] = ((FoundChoice)stepContext.Result).Value;
-            if ((string)stepContext.Values["addiorder"] == "네")
-            {
-                orderData.Initial = false;
-                return await stepContext.ReplaceDialogAsync(nameof(AddMySandwichDialog), null, cancellationToken);
-            }
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
-        }
-
-        private async Task<DialogTurnResult> ConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
-            stepContext.Values["requirement"] = stepContext.Result.ToString();
-            orderData.Requirement = (string)stepContext.Values["requirement"];
-
-            return await stepContext.BeginDialogAsync(nameof(OrderEndDialog), null, cancellationToken);
+            else return await stepContext.BeginDialogAsync(nameof(OrderEndDialog), null, cancellationToken);
         }
     }
 }

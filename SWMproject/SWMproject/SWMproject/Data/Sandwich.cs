@@ -25,7 +25,6 @@ namespace SWMproject.Data
         public string SetMenu { get; set; }
         public string SetDrink { get; set; }
 
-
         public Sandwich(string menu,string bread,List<string> cheese, bool warmup, List<string> topping,List<string> vege,List<string> sauce ,string setMenu,string setDrink) 
         {
             this.Menu = menu; this.Bread = bread; this.Cheese = cheese; this.Warmup = warmup; this.Topping = topping; this.Vege = vege; this.Sauce = sauce; this.SetMenu = setMenu; this.SetDrink = setDrink;

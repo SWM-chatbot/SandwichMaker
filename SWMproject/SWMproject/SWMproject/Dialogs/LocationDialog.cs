@@ -25,6 +25,7 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
+                InitialStepAsync,
                 UserInputStepAsync,
                 FindShopStepAsync,
                 ConfirmStepAsync
@@ -36,6 +37,18 @@ namespace SWMproject.Dialogs
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
+        }
+        private async Task<DialogTurnResult> InitialStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            if (orderData.Initial)
+            {
+                orderData.Num = 0;
+                orderData.Sandwiches = new List<Sandwich>();
+                orderData.Price = 0;
+            }
+            return await stepContext.NextAsync();
         }
 
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -118,8 +131,8 @@ namespace SWMproject.Dialogs
             {
                 return await stepContext.ReplaceDialogAsync(nameof(LocationDialog), null, cancellationToken);
             }
-            //return await stepContext.BeginDialogAsync(nameof(MenuDialog), null, cancellationToken);
-            return await stepContext.EndDialogAsync();
+            return await stepContext.BeginDialogAsync(nameof(MenuDialog), null, cancellationToken);
+            //return await stepContext.EndDialogAsync();
         }
 
     }
