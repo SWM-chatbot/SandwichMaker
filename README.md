@@ -4,7 +4,7 @@
 -------------------------------------------------------
 
 ## 서비스 소개
-* https://swm-chatbot.github.io/SandwichMaker/SandwichMaker.html
+* 챗봇 접속 url https://swm-chatbot.github.io/SandwichMaker/SandwichMaker.html
 
 ## 시연영상
 * v0.1 https://youtu.be/7rXMKE97_oA
