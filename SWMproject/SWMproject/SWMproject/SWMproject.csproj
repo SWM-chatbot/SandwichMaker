@@ -15,18 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Cards\InputTipCard\슬라이드1.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드2.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드3.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드4.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드5.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드6.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드7.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드8.PNG" />
-    <None Remove="Cards\InputTipCard\슬라이드9.PNG" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Cards\welcomeCard.json" />
   </ItemGroup>
 
@@ -40,18 +28,7 @@
     <PackageReference Include="Microsoft.Recognizers.Text.DataTypes.TimexExpression" Version="1.3.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Cards\InputTipCard\슬라이드1.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드2.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드3.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드4.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드5.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드6.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드7.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드8.PNG" />
-    <Resource Include="Cards\InputTipCard\슬라이드9.PNG" />
-  </ItemGroup>
-
+ 
   <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
