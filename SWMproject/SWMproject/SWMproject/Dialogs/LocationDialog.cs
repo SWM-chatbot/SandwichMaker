@@ -25,17 +25,30 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
+                InitialStepAsync,
                 UserInputStepAsync,
                 FindShopStepAsync,
                 ConfirmStepAsync
             };
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
-            AddDialog(new OrderDialog(userState));
+            AddDialog(new MenuDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
+        }
+        private async Task<DialogTurnResult> InitialStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+
+            if (orderData.Initial)
+            {
+                orderData.Num = 0;
+                orderData.Sandwiches = new List<Sandwich>();
+                orderData.Price = 0;
+            }
+            return await stepContext.NextAsync();
         }
 
         private static async Task<DialogTurnResult> UserInputStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -73,6 +86,12 @@ namespace SWMproject.Dialogs
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
             List<string> places = new List<string>();
+            places.Add("다시 검색하기");
+            if (array.Count < 1)
+            {
+                await stepContext.Context.SendActivityAsync("검색 결과가 없습니다.");
+                return await stepContext.ReplaceDialogAsync(nameof(LocationDialog));
+            }
             foreach (JObject jobj in array)
             {
                 string place_name = jobj["place_name"].ToString();
@@ -108,7 +127,12 @@ namespace SWMproject.Dialogs
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             orderData.location = ((FoundChoice)stepContext.Result).Value;
-            return await stepContext.BeginDialogAsync(nameof(OrderDialog), null, cancellationToken);
+            if(orderData.location == "다시 검색하기")
+            {
+                return await stepContext.ReplaceDialogAsync(nameof(LocationDialog), null, cancellationToken);
+            }
+            return await stepContext.BeginDialogAsync(nameof(MenuDialog), null, cancellationToken);
+            //return await stepContext.EndDialogAsync();
         }
 
     }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using SWMproject.Data;
@@ -27,16 +28,48 @@ namespace SWMproject.Dialogs
             //실행 순서
             var waterfallSteps = new WaterfallStep[]
             {
+                AddiStepAsync,
+                RequirementStepAsync,
                 SummaryStepAsync,
                 DataUpdateStepAsync
             };
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
+            AddDialog(new TextPrompt(nameof(TextPrompt)));
+            AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             InitialDialogId = nameof(WaterfallDialog);
+        }
+
+        private async Task<DialogTurnResult> AddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+               new PromptOptions
+               {
+                   Prompt = MessageFactory.Text("다른 샌드위치를 추가하시겠어요?"),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오", "주문 취소" }),
+               }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> RequirementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+            string result = ((FoundChoice)stepContext.Result).Value;
+            if (result == "네")
+            {
+                orderData.Initial = false;
+                return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
+            }
+            else if (result == "주문 취소")
+            {
+                return await stepContext.EndDialogAsync();
+            }
+            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("추가 요구사항을 입력하세요.") }, cancellationToken);
         }
 
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+            stepContext.Values["requirement"] = stepContext.Result.ToString();
+            orderData.Requirement = (string)stepContext.Values["requirement"];
 
             List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image: new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
             ItemList.Add(new ReceiptItem("-----------------------------------"));

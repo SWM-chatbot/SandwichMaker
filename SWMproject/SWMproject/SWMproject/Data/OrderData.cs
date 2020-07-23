@@ -32,7 +32,7 @@ namespace SWMproject.Data
         public string SetMenu { get; set; }
         public string SetDrink { get; set; }
         //단품
-        public List<string> AddiOrder { get; set; }
+        //public List<string> AddiOrder { get; set; }
         //9. 요구사항
         public string Requirement { get; set; }
 
