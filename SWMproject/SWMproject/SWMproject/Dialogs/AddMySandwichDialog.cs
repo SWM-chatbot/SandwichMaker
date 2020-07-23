@@ -30,6 +30,7 @@ namespace SWMproject.Dialogs
                 InsertDBStepAsync
             };
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
+            AddDialog(new OrderEndDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
@@ -70,7 +71,7 @@ namespace SWMproject.Dialogs
             var dbData = new DBdata { id = $"{keyword}", Contents = sandwich, ETag = "x", AccountNumber = ipAddr };
             await container.UpsertItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
 
-            return await stepContext.EndDialogAsync();
+            return await stepContext.BeginDialogAsync(nameof(OrderEndDialog));
         }
     }
 }

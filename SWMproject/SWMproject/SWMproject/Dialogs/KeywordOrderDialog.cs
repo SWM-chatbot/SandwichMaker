@@ -21,7 +21,7 @@ namespace SWMproject.Dialogs
         private static readonly string containerId = "MySandwiches";
 
         private static string ipAddr;
-        private static List<DBdata> keywordList = new List<DBdata>();
+        private static List<DBdata> keywordList;
 
         private static int flag;
         private static Sandwich my_sandwich;
@@ -58,13 +58,13 @@ namespace SWMproject.Dialogs
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("무엇을 도와드릴까요?"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "키워드 확인하기", "키워드 주문하기","키워드 삭제하기","키워드 만들기" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "키워드 확인하기", "키워드 주문하기","키워드 삭제하기","키워드 만들고 주문하기" }),
                }, cancellationToken);
         }
         private static async Task<DialogTurnResult> BeginKeywordStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             string result = ((FoundChoice)stepContext.Result).Value;
-            if (result == "키워드 만들기")
+            if (result == "키워드 만들고 주문하기")
             {
                 return await stepContext.ReplaceDialogAsync(nameof(OrderDialog), null, cancellationToken);
             }
@@ -72,8 +72,19 @@ namespace SWMproject.Dialogs
             await Initialize();
             if (result == "키워드 확인하기")
             {
+                keywordList = new List<DBdata>();
                 await GetAllKeyword(ipAddr);
                 //키워드 출력
+                string list = "키워드 리스트입니다!\r\n";
+                foreach(var kw in keywordList)
+                {
+                    list += kw.id;
+                    list += " ";
+                }
+                if(keywordList.Count<1)
+                    await stepContext.Context.SendActivityAsync("키워드가 없습니다!");
+                else
+                    await stepContext.Context.SendActivityAsync(list);
                 return await stepContext.ReplaceDialogAsync(nameof(KeywordOrderDialog),null, cancellationToken);
             }
             else 
@@ -97,28 +108,36 @@ namespace SWMproject.Dialogs
         private async Task<DialogTurnResult> KeywordOrderStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             string keyword = stepContext.Result.ToString();
-            await GetKeyword(ipAddr,keyword,stepContext);
+            await GetKeyword(ipAddr,keyword);
             if (my_sandwich == null)
             {
                 await stepContext.Context.SendActivityAsync("키워드가 없습니다!");
                 return await stepContext.ReplaceDialogAsync(nameof(KeywordOrderDialog), null, cancellationToken);
             }
 
-            var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
-            orderData.Price += Topping.menu_price[my_sandwich.Menu];
-            foreach(var top in my_sandwich.Topping)
-            {
-                orderData.Price += Topping.topping_price[top];
-            }
-            orderData.Num++;
-            orderData.Sandwiches.Add(my_sandwich);
+            
             switch (flag)
             {
                 case 1: //키워드 주문하기
+                    var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
+                    orderData.Price += Topping.menu_price[my_sandwich.Menu];
+                    foreach(var top in my_sandwich.Topping)
+                    {
+                        orderData.Price += Topping.topping_price[top];
+                    }
+                    orderData.Num++;
+                    orderData.Sandwiches.Add(my_sandwich);
                     return await stepContext.ReplaceDialogAsync(nameof(OrderEndDialog), null, cancellationToken);
                 case 2: //키워드 삭제하기
-                    //코드 추가 필요
-                    break;
+                    try
+                    {
+                        ItemResponse<DBdata> item = await container.DeleteItemAsync<DBdata>(keyword, new PartitionKey(ipAddr));
+                    }
+                    catch(System.Exception e)
+                    {
+                        Debug.Print(e.Message);
+                    }
+                    return await stepContext.ReplaceDialogAsync(nameof(KeywordOrderDialog), null, cancellationToken);
                 default:
                     break;
             }
@@ -171,7 +190,7 @@ namespace SWMproject.Dialogs
                 Debug.Print(e.Message);
             }
         }
-        private static async Task GetKeyword(string ip, string keyword, WaterfallStepContext stepContext)
+        private static async Task GetKeyword(string ip, string keyword)
         {
             //keyword 가져오기
             try
@@ -191,9 +210,9 @@ namespace SWMproject.Dialogs
             }
             catch (System.Exception e)
             {
-                await stepContext.Context.SendActivityAsync("키워드가 없습니다!");
+                Debug.Print(e.Message);
             }
         }
-        
+
     }
 }
