@@ -17,8 +17,8 @@ namespace SWMproject.Dialogs
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
         private static Database database = null;
         private static Container container = null;
-        private static readonly string databaseId = "test";
-        private static readonly string containerId = "MySandwiches";
+        private static readonly string databaseId = Startup.DatabaseId;
+        private static readonly string containerId = Startup.ContainerId_keyword;
 
         private static string ipAddr;
         private static List<DBdata> keywordList;
@@ -149,10 +149,10 @@ namespace SWMproject.Dialogs
         private static async Task Initialize()
         {
             //db 가져오기
-            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            CosmosClient client = new CosmosClient(Startup.CosmosDbEndpoint, Startup.AuthKey);
             database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
 
-            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: Startup.PartitionKey);
             container = await database.CreateContainerIfNotExistsAsync(
                 containerProperties,
                 throughput: 1000);
