@@ -127,7 +127,7 @@ namespace SWMproject.Dialogs
             await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(receiptCard.ToAttachment()), cancellationToken);
 
             orderData.Initial = true;
-            return await stepContext.NextAsync();
+            return await stepContext.EndDialogAsync();
         }
 
         private async Task DataUpdateStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -242,7 +242,6 @@ namespace SWMproject.Dialogs
                     await container.CreateItemAsync<DBcount>(countData, new PartitionKey("0"));
                 }
             }
-            return await stepContext.EndDialogAsync();
         }
     }
 }
