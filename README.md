@@ -81,7 +81,7 @@ cd SWMproject
     
 ### 참고자료
 * [azure bot service설명서](https://docs.microsoft.com/ko-kr/azure/bot-service/?view=azure-bot-service-4.0)
-* [Azure Cosmos sql](https://docs.microsoft.com/ko-kr/azure/cosmos-db/sql-api-dotnet-samples)
+* [Azure Cosmos sql](https://docs.microsoft.com/ko-kr/azure/cosmos-db/sql-api-dotnet-v3sdk-samples)
 * [Azure Cosmos](https://github.com/Azure/azure-cosmos-dotnet-v3)
 * [Bot Framework 4.0 (2) Hello Bot](http://youngwook.com/221557638246)
 * [Bot Framework 4.0 (3) 배포하기](http://youngwook.com/221558237007)

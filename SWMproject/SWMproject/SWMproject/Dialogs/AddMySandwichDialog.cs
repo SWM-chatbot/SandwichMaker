@@ -18,8 +18,8 @@ namespace SWMproject.Dialogs
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
         private static Database database = null;
         private static Container container = null;
-        private static readonly string databaseId = "test";
-        private static readonly string containerId = "MySandwiches";
+        private static readonly string databaseId = Startup.DatabaseId;
+        private static readonly string containerId = Startup.ContainerId_keyword;
         public AddMySandwichDialog(UserState userState) : base(nameof(AddMySandwichDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
@@ -30,6 +30,7 @@ namespace SWMproject.Dialogs
                 InsertDBStepAsync
             };
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
+            AddDialog(new OrderEndDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
@@ -43,10 +44,10 @@ namespace SWMproject.Dialogs
         }
         private async Task<DialogTurnResult> InsertDBStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            CosmosClient client = new CosmosClient(Startup.CosmosDbEndpoint, Startup.AuthKey);
             database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
 
-            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: Startup.PartitionKey);
             // Create with a throughput of 1000 RU/s
             container = await database.CreateContainerIfNotExistsAsync(
                 containerProperties,
@@ -70,7 +71,7 @@ namespace SWMproject.Dialogs
             var dbData = new DBdata { id = $"{keyword}", Contents = sandwich, ETag = "x", AccountNumber = ipAddr };
             await container.UpsertItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
 
-            return await stepContext.EndDialogAsync();
+            return await stepContext.BeginDialogAsync(nameof(OrderEndDialog));
         }
     }
 }

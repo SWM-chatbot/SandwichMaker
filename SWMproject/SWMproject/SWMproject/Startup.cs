@@ -20,6 +20,12 @@ namespace SWMproject
     public class Startup
     {
         private IConfiguration _configuration;
+        public static string CosmosDbEndpoint;
+        public static string AuthKey;
+        public static string PartitionKey;
+        public static string DatabaseId;
+        public static string ContainerId_order;
+        public static string ContainerId_keyword;
         public Startup(IConfiguration iconfig)
         {
             _configuration = iconfig;
@@ -30,22 +36,24 @@ namespace SWMproject
         {
             services.AddControllers().AddNewtonsoftJson();
             // Use partitioned CosmosDB for storage, instead of in-memory storage.
-            services.AddSingleton<IStorage>(
-                new CosmosDbPartitionedStorage(
-                    new CosmosDbPartitionedStorageOptions
-                    {
-                        CosmosDbEndpoint = _configuration.GetValue<string>("CosmosDbEndpoint"),
-                        AuthKey = _configuration.GetValue<string>("CosmosDbAuthKey"),
-                        DatabaseId = _configuration.GetValue<string>("CosmosDbDatabaseId"),
-                        ContainerId = _configuration.GetValue<string>("CosmosDbContainerId"),
-                        CompatibilityMode = false,
-                    }));
+            //services.AddSingleton<IStorage>(
+            //   new CosmosDbPartitionedStorage(
+            //      new CosmosDbPartitionedStorageOptions
+            //     {
+            CosmosDbEndpoint = _configuration.GetValue<string>("CosmosDbEndpoint");
+            AuthKey = _configuration.GetValue<string>("CosmosDbAuthKey");
+            PartitionKey = _configuration.GetValue<string>("CosmosDbPartitionKey");
+            DatabaseId = _configuration.GetValue<string>("CosmosDbDatabaseId");
+            ContainerId_order = _configuration.GetValue<string>("CosmosDbContainerId1");
+            ContainerId_keyword = _configuration.GetValue<string>("CosmosDbContainerId2");
+            // CompatibilityMode = false,
+            //  }));
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
-            //services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddSingleton<IStorage, MemoryStorage>();
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();

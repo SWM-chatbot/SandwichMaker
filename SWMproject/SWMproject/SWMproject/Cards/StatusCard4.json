@@ -1,0 +1,11 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://user-images.githubusercontent.com/47727109/88365517-42200b80-cdc1-11ea-9d08-827f7149b797.png"
+    }
+  ]
+}
