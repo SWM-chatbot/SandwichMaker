@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
+using Microsoft.Bot.Schema;
+using Newtonsoft.Json;
 using SWMproject.Data;
 
 namespace SWMproject.Dialogs
@@ -52,6 +55,16 @@ namespace SWMproject.Dialogs
         //async 정의
         private static async Task<DialogTurnResult> MenuStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            //진행 상태 이미지
+            string _cards = Path.Combine(".", "Cards", "StatusCard1.json");
+            var adaptiveCardJson = File.ReadAllText(_cards);
+            var adaptiveCardAttachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(adaptiveCardAttachment), cancellationToken);
+
             stepContext.Values["bread"] = ((FoundChoice)stepContext.Result).Value;
             
             await stepContext.Context.SendActivityAsync(Cards.GetCard("menu"), cancellationToken);
@@ -67,8 +80,6 @@ namespace SWMproject.Dialogs
         
         private static async Task<DialogTurnResult> BreadStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            await stepContext.Context.SendActivityAsync(Cards.GetCard("bread"), cancellationToken);
-
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
@@ -79,6 +90,16 @@ namespace SWMproject.Dialogs
 
         private async Task<DialogTurnResult> ShowToppingStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            //진행 상태 이미지
+            string _cards = Path.Combine(".", "Cards", "StatusCard2.json");
+            var adaptiveCardJson = File.ReadAllText(_cards);
+            var adaptiveCardAttachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(adaptiveCardAttachment), cancellationToken);
+
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             stepContext.Values["menu"] = ((FoundChoice)stepContext.Result).Value;
 
@@ -115,6 +136,16 @@ namespace SWMproject.Dialogs
 
         private async Task<DialogTurnResult> WarmupStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            //진행 상태 이미지
+            string _cards = Path.Combine(".", "Cards", "StatusCard3.json");
+            var adaptiveCardJson = File.ReadAllText(_cards);
+            var adaptiveCardAttachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(adaptiveCardAttachment), cancellationToken);
+
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
             if (stepContext.Result!= null)
             {
@@ -149,6 +180,16 @@ namespace SWMproject.Dialogs
         }
         private static async Task<DialogTurnResult> SetMenuAddiStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            //진행 상태 이미지
+            string _cards = Path.Combine(".", "Cards", "StatusCard4.json");
+            var adaptiveCardJson = File.ReadAllText(_cards);
+            var adaptiveCardAttachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(adaptiveCardAttachment), cancellationToken);
+
             stepContext.Values["setmenu"] = "단품";
             if (((FoundChoice)stepContext.Result).Value == "네")
             {

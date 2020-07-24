@@ -19,8 +19,8 @@ namespace SWMproject.Dialogs
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
         private static Database database = null;
         private static Container container = null;
-        private static readonly string databaseId = "test";
-        private static readonly string containerId = "Order";
+        private static readonly string databaseId = Startup.DatabaseId;
+        private static readonly string containerId = Startup.ContainerId_order;
         public OrderEndDialog(UserState userState) : base(nameof(OrderEndDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
@@ -30,8 +30,7 @@ namespace SWMproject.Dialogs
             {
                 AddiStepAsync,
                 RequirementStepAsync,
-                SummaryStepAsync,
-                DataUpdateStepAsync
+                SummaryStepAsync
             };
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
@@ -71,12 +70,14 @@ namespace SWMproject.Dialogs
             stepContext.Values["requirement"] = stepContext.Result.ToString();
             orderData.Requirement = (string)stepContext.Values["requirement"];
 
+            await DataUpdateStepAsync(stepContext, cancellationToken);
+
             List<ReceiptItem> ItemList = new List<ReceiptItem> { new ReceiptItem(image: new CardImage(url: "https://www.subway.co.kr/images/common/logo_w.png")) };
             ItemList.Add(new ReceiptItem("-----------------------------------"));
 
             foreach (Sandwich tmpSand in orderData.Sandwiches)
             {
-                ItemList.Add(new ReceiptItem("메뉴", price: Topping.menu_price[tmpSand.Menu].ToString() + "원"));
+                ItemList.Add(new ReceiptItem("메뉴", subtitle: $"{tmpSand.Menu}({tmpSand.Bread})",price: Topping.menu_price[tmpSand.Menu].ToString() + "원"));
                 foreach (string temp in tmpSand.Topping)
                 {
                     ItemList.Add(new ReceiptItem(temp, price: Topping.topping_price[temp].ToString() + "원"));
@@ -88,6 +89,7 @@ namespace SWMproject.Dialogs
                 }
                 string vege = "";
                 string sauce = "";
+                string cheese = "";
                 foreach (string temp in tmpSand.Vege)
                 {
                     vege += temp + ",";
@@ -96,8 +98,13 @@ namespace SWMproject.Dialogs
                 {
                     sauce += temp + ",";
                 }
+                foreach (string temp in tmpSand.Cheese)
+                {
+                    cheese += temp + ",";
+                }
                 ItemList.Add(new ReceiptItem("야채", subtitle: vege));
                 ItemList.Add(new ReceiptItem("소스", subtitle: sauce));
+                ItemList.Add(new ReceiptItem("치즈", subtitle: cheese));
                 ItemList.Add(new ReceiptItem("-----------------------------------"));
             }
 
@@ -119,14 +126,14 @@ namespace SWMproject.Dialogs
             return await stepContext.NextAsync();
         }
 
-        private async Task<DialogTurnResult> DataUpdateStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task DataUpdateStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var orderData = await _orderDataAccessor.GetAsync(stepContext.Context, () => new OrderData(), cancellationToken);
 
-            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            CosmosClient client = new CosmosClient(Startup.CosmosDbEndpoint, Startup.AuthKey);
             database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
 
-            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: Startup.PartitionKey);
             // Create with a throughput of 1000 RU/s
             container = await database.CreateContainerIfNotExistsAsync(
                 containerProperties,
@@ -142,7 +149,7 @@ namespace SWMproject.Dialogs
                         FeedResponse<DBdata> result = await feedIterator.ReadNextAsync();
                         foreach (var item in result)
                         {
-                            orderData.OrderNum = Int32.Parse(item.id) + 1;
+                            orderData.OrderNum = Int32.Parse(item.id);
                         }
                     }
                 }
@@ -167,12 +174,10 @@ namespace SWMproject.Dialogs
             foreach (Sandwich tempSand in orderData.Sandwiches)
             {
                 string sJson = JsonConvert.SerializeObject(tempSand);
-                var dbData = new DBdata { id = $"{orderData.OrderNum++}", Contents = tempSand, ETag = "x", AccountNumber = ipAddr };
+                var dbData = new DBdata { id = $"{++orderData.OrderNum}", Contents = tempSand, ETag = "x", AccountNumber = ipAddr };
                 
                 await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
             }
-
-            return await stepContext.EndDialogAsync();
         }
     }
 }

@@ -591,91 +591,55 @@ namespace SWMproject
                 case 1:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FqGAwq%2FbtqFWdsdHjQ%2F4EFBoigZahjaDfQLmLAqf1%2Fimg.png") },
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/JJkq0P_OGf2APvfq2Q96NGMqC0RTt9V1cojXbvwT2usBDEXuyMeE5JTRNzuYNAbE7qzzBOiGNOJNBZzkf9GvPNxaFNhVZqU8OSQXOgxD48v3ct6uh_g6bONMoiy3Mi32L1SoZfhZOD_px_q8co7MpeR4uZtoAFL3OF6f0URqASl3LZh35ZApvScbwNIwhPiIU_r8uyandOJQESTv_NU23uy0z-sWJ8rW_Wd6iTEBTFDwS7ifE-4Bl_swECvNOHAhwtduzjkcTTsfXkjm3sUj__4JxYFr09JLDkCChUbFb3YHHDV-klznffAiK1x85mtx4DGhifys9aGOHh1qG2YciTpakOLgKOB9t32JrEJKrKGt0XniGw-x_feHUHSU4jyBEeIB5OB0gbTe21Uno4UpR5UMouuArj_y3u7wGgVY6qYmkuh5m0Kv8WXdMc-fNN9HSKAeKgWwXefbFRaC_UzqGfMFGK5BqHWQ6AuZjCmdnmt4Ry2uQNzJ5ncsqBsRz7WxgldBlpCreUTPkioAIsnBKyvh4ZqLaF_qngCtmOJ8y-Gs8W7i6UPSgiX_1-aiL8x67C75T1_xXcfX0kNu6zakOK5YeIRxv2-5lsu6D-EUvY-u2Id_q84HcZsh236OsjlR1Y8jbJqqHZnGA2P3dlsK1JLZ2LA08nd3hXii2EsNZS-iri3I_DTLFH7BnJud=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 2:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FID1mo%2FbtqFXhglWgI%2FEeqEykkKy7mGWLEYg6XqF0%2Fimg.png") },
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/2wKwYlZYudXb9uUtKF9YnASF28bJKYuzsp5DP1Vhu1ZqfHxMUccDKwtJ90sI7Hc4X4NV2s6k8G7OCi8ak1-ml1lhgzdtmlreDJHlT3KZ3-n18CPB_YO4qArfH2VqMuqoxnw3jiWGpdWKO6DUdFSYu5auifrqDIXB-CewV6dZzpLdfYrGjTDPUfQJ4mM6jmoRjAiV0VvQ-g6IPUV5aWxN6_xOPQ0G8GTv9LzNB1ZKOAUY_5KNvf8AgRRzml7UmB-I1x0Lh7eSQDGdzo5JdJ-YFu7KRtg-4bwxuNgdargTcO1HnHpOqfU6ktekGRwJms_Z_jY0gVNhsG_T_HEKW0sb-3z-Aur_JcxddDCvabW4FBDc27vufwqYehqNOL8gzlV7ai1gACAtDMHgAuLoQPyHx6BVTbXkK0klueJ3OQk6mM0cYw6q9j-h6rr1E1wroKWvPJXYMKP8Bx9zrT2dO4Tp2vut90RXa-tAh0h10kIgfmaxpWwm7pfh_vCTvxmbflAH2dHjJcSu2iNkwAEdJAXa1Bj2iKoh2NOgop26gAYhRXf7sD0GKbK-Qzat0xt2n06moeATocoafndZegTvnEBnYN2sZPQ3Of_6_5T8it9Uv8Dl_94I0VLftItgVJOycqjXWANNTtWZVdU4xG7ilLMyAUDJmJSE2EstZgqowctv_miJjnoeUkjoJUujWSth=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 3:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbg7Rbp%2FbtqFUBAAbej%2FJZ6TAhsTXLGP5brRytky4k%2Fimg.png") },
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/9jMqR9RnlfrBRz5dQD7Xv5KVoqOZATh9uWUHtxFly7i1U9NBSpSOKCdtSGJ_GTeVZAxXW_mXlFl9dfgHGTvVVXBp1bv56GUbWliOrhbSNF-5l_R5RF7x7X9XZNaDjJO3yiyLOAUtXc6zzrSKQZGFpx_o4ujnjH_uauX3sAxdcQlMYeDSCmicfsZsrDZkFePKQ6yLxNZ7ZJaAux5A4zFESvNycMo8efg7SNT8V5_gg56H9tnfDdM-oNr_2NI_OITQUu1N417FJfFdU0NCECFzldvSZ-ZN1VZklL8aRjpsPhbZJ0cpJ1PiAm1jjnFTXNgZ3Tv1x_KQvDVVNIqR4fDWv5J6qgHlYNGIheQLrH7Q_wc3JQT6735xC5rmdY1PRlpR4oKxhzWssUCWE0QmhtsAe3Fy1f8lWkgDNYzfRkIy-feKfkczjN8DyFYfdwX9fWcRoNac0kTHWdLPIW71Xoc1E62Ll0P-JubY-ITqMeUmaQUHSdmp_NByDG47PvG2qXqq5WXvIsjUvKJTiroK9rSyCTZ1347BIClEtFSdp_KuTUl6gW45AvimCl-t9ZGWZ8DMfVYKueY57L57JQJa6nMd1lx9ksdlRT5o-ON-Tf-iXtX9xsxmSJ05tjN_zPE2OIB9w1gOPzsrqcKLXEn7YkHLTTlygLVSmOcAVajQVZDNpcsQbnPdoDBPjSbZSunJ=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 4:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbG8ndZ%2FbtqFWY9bWxl%2Flq55yNkUyB8oQ2w16e07EK%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/2aYqrDFQGNqTQvT1k986U94GYYqnhthdDp68YuEKVVQUQmEdRIBw5wjFJY4LM_NYMVsqbNxFq-TxKa7ClpNTMP6GYQaW-O4MQag3RREHEVbx0XtHwUIvbafvaA54MK1rFQLOu8imYtK4QXLSjGBe0b62yhLtI68X1mP4SH8VqQz_6O4HgiPIOMytE21UHVIxX85az_5f7ofrZEjqhR_lVIx4Ilkuto05bmjOWiqGfXSNfkiIxcZ-YLyRyVgOdKHFdT8m0sszuBklIZk4aoNKGVbkFt-E3GArYYZmqvSgDmnTgUyd19D_LnhLV08PekyyMmtrr5zAcb79QE_Zg2E6_nhcL34BtewXUJqxr9T1SqFXcOgxezh5OO3uG6NgRvlPj4XmaBD-iFud24ey6rhvTxEIbga8UZ2WPc1ts1lOQiBQoduIEPeUAzf1hHW5mFxDNMZW5LPFhvepIRDI70-87YV9JucFQ50IbkQPHDW9krA9vDjE6Dy6B9_6mmZlrnb08w8ZsHA6en8T346b9xaOickV8IOWoRVUmdH7OC3ktWiqSJcUnkkGp43QgBtx0U5isG0One0le-u9fW6YDCEsAOoh1adknKv1EGDzTP7onngGKIw1wzoHztkS-_Oe3vvogDS5FQVjvq0Q-Sy-1yQ-7CUyJvCHU1RtJmSIuTc8eIkdQA9Iqw-Mz8kEuR7u=s206-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 5:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcOCKFM%2FbtqFXhAEjLg%2FPApSLxRgNJdDvyV08Ob6KK%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/Y2YNSCIewDKVk796KLwAOIOhbeu2eAbmZCpL1dSKP3SdbLFjSk-aWs2_OSQCM1P1GP-yorwdKKk2EQDXkxVQcbKlCgevHJtP1EHbw0VVr-yUR7f3Y-eKNkFZAlKskRves5VJQe8bma3JuXBP-N0ujjWyvqdwQhta7pS7E_wkP5CDIYYByajkA_BzlN8HivJigizrp2E3OHy0hBogVBQc6ontwUyhbxY9x-wh20MP9XIfBbvJqa2n_LtjU2MxcaywUu8w0MHhk1I9F4IgmIfvFPUNc9umoNIA1oilR5XBxX_8uUkrKyCGcXZuSRMJ7MV9S_zA-A28Zd3efbzmY3OY7f7lrEBPrmsrhEBlJHmFa4UNdra1jgP6Iz_-bPBepNo7L7OaZIx0B9GtxRlWwF_2GJ7UvcLnboXdHKpwwX1DRvvMrVsiO4VSCcFqOK9nszvtpFIVURcetNCwXVV7LYeiB53smCT3DtYpH6BTUENZ9FXpPn9E73ZsbNXfM3BTfZba5Tm5hdi9YCqdi2-5Z8i1os24FvrgS9kPu8z7qRLSwldm2_VjcT2yCVH3L6W3K6u9RE0Y5mAAWawmhV-3Aug9snk9CJsF5agGI6x_JzOZcQeoIPprCE4OZOo4h5IYVsoyMjhxCoOnNtfFyeZnOyd8G_jHz3AsllDVGzrk1Qzwf8-Hur9u5-ct9oskaiF4=s206-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 6:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbYRel8%2FbtqFXIrgnFM%2FPy2Wci2nkG9KBS4eBFk8Mk%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/dy18F0-uIpMu0PhgWmu1WCCWB73kXHPhnawxBVyN2phbt_83e1UE3w9lV-DicXRIPF0xr4OpelcORODSSZLM8octuclvx3XE3FHcI8cl5iZ_eIQJIHvRLgejgq7RN0lj5ecXF7CdPNe14UqDUvhlGlnrFR4lOavVrcC90DU1-kYsU2X3j7fYKwepE8wNDLOu3BhUXI9a2UhS5PGC8Q4RjjbYF5hTAmkxHewW8mM22s_QdlC90of-h66MIqjs0NaX470tAVi9aH4AppR0u7Tghwc5jSlV19F6ggNwOUrZmfF3mosMtQsRBrDUED3ERdKJfJsY0szYAcMB6zL_DYibBUhvWHDOIY4v-7Mj1jPvrE5d-xy25sbeTH4ZsgzZQtjILvwWSdbPXTZH6JraeF-UjGnnES--I0jYlKcDadl6D1bp2vVmZ1eGQy8SyZLpoUSf3Cp5HJV0uIEXni8MKiuOR1XmuCnHry5r2UA6tCwxpOINpIuiPROBN1J0H8ml8XYiugwDlCrIAkrXbJgpC4egUnYpN2GmS5x3zOJEBfmCvhJg4MpEbetFESgYHgyWxtO0LeVu7h_OZsds1V1WtOjvjpn_tjkfx_llek0Ww_59I2tlXAj0qZBMoE0a89gYCRJT6DZzllevk2frZcx-pou6pERiI2ZQNIDpDyciZlJKd9KaUX0J0IgXi116OV1J=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 7:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F2aTDT%2FbtqFXIdJna5%2FWI9sjfbLVNHrz5T21DLVeK%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/CvcFwP0CEH0RnHPYivtbdJPTy6ndf7am3TBOSVQYU9sqm1NuBoNEWGdoD5ETN_hRNHyIrIE19iFBkjNvu6wOfb9y6LD_XWXSnP6HB9ZG7gCP36wMFAb3OM4S4EQzmZituZu2GquVBhp3MNw3IRcd76ARgS8S0xwNZAsAHNlybz0oGaRer-f5XQQzvPnFLrfAmSE4IdZfv0XuSTnKQlkYcw7KILmDjgV6rp-ywIc4nUNgIq2M7Xgc9YieguKwmaITLw6GVZuqi7X_9vbo-80PPJ5p5tfKdYj7EDtDtW9h40wVfI7JgZzVya6lySpEgPE-pzUEu281NO1gfxLTLZVky_97AxVCmLFAOdOXhD-cY_VU9SvOhztlxv8VcX88W5RAt5OyQfrWVrMJGf9eNp-HOTRfkzGLGqo7vaSQTTJY-_bI1V47OrwyHgalKNReAq0GDVOt2LDex5gftL9i0bbvCCLW-6MgznLa2Z0tbgY8Hg3H-o-hX0OdLvAWs2iFPTX2lnd22Dj441W92CJeqd1Dkjj5AHSVHdr4OVMAq7rCM20VDWNtSSMb3XjEQFtoxwNU9U7pc_L0P_iB09eWz4ERiHCI7hDvxljJFLJBU9lgH7t3t5dDhNRDHn4h5zejZkW2c2j8FsRnMeelDKHQhGgijxBYZu7Wad3NqZRjpNSG0eHCOr7OZIx1SvFSwy4_=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 8:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbLudjb%2FbtqFUz3Ss35%2FvQrR4dTsSCPkcYISrsH6Dk%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/2j1W6TK_qcGjcRauSH9bkTVECw-OSWbCSUsz_PcI6q3HcXvUwNw-8r7G-sLd3_jlLpYxTuctIO42rzy6Jkq6VzuW3a449s7ROmoBt6Z-hD5lxxrr2_SVobUrodTTaAsGj7GTgJeYbhd3GcbEdUMG7KlCjoZG4oc6IcU-RUkgOqX1lyse4I4ifo_fvl8vl7TgtjaQWy5w2aREXUSen-qLvufrkOgNrXZ_vzZizjBIlwT9eAton9plOKdvRKjaAOFOT0o2HMItFHL_ywKgZmwb69c9-5YUma6J1bDwrvgjTZxEfc_uBlJWCCsDbW4gMZn4kdz0G6f8l35BGMvLG66HVGbhBbSgZRGQ823FVJny6HMyelk2kBHnI7yPflAhPgjxdkizika0sLJMeR7iZjYzsKBkqsduExPDYKwBPhMDMEd5iL2OSXyOvbmuCHC7QGAKhz_G1xvKHu2Fuv0ZCibNDHzmw8xDdRnR37TjYWkjQft_ExtKelT8Xn7m65nUst7uU1_JFNU0aYhDKWX7qosxziaC-1mkOQyOT4HBO1ZXhuI4KhQzCY9b7TxLvjVVdy1QeqlBI66j0rsp4TFpE9GZ2QgxMQdkJZNxdlWPddEFpJs7fkeuAnJimERekgg69H2C1PnoV4LCOKELArdjqxBTH3ugFKb9MtHAz2C-V9YWKWTOcbIMg6t6u-k1yrB4=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
                 case 9:
                     heroCard = new HeroCard
                     {
-<<<<<<< HEAD
                         Images = new List<CardImage> { new CardImage("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fmm0oe%2FbtqFVhVWBkv%2FzjkHfEQjEnUARKEkHNtID1%2Fimg.png") }
-=======
-                        Images = new List<CardImage> { new CardImage("https://lh3.googleusercontent.com/YV0aFEqVSl_VpJILmmdBOw3un_YJsk_67TH4fVTU4LHODt5sXwggRO87zzfIgunCnglUxId_fkjH80KIwbSZfGEERbjXx68VOBgUGgxCaUTpgkWPjXofOy1DwwESBXMzi1nypozGgwSc3OuW-grUa91DsK5z26zZ1Adv2VP5vNPF1Jg15vq8T7LoDycEImnPkQYfJJxKDwAc2aIOIGUnsda_9tRVrK4W_Sm6BW6-Ua1stlIq9t8lcv28xW1i5nv8bleJ2bMBsJ13AqFtUBXxVA-ATCXKz1W3mC8oBeWkDarYi0Y7CT_g6zArRudDz7bhrE0rcy3LICmzmyii5tX9PvVlFnb0JYMpKo_kMeME3D7kqnS8cr9of3R80fSKPbgOpQaYNoOGHy6wKwpBrWmw62BRLvzh13FlGf4vR87VPWJrkgM9DhPDkSOPWpCh4uhFXxxUh7Drir0Eey1c6bSlcC6NjM-g4vxOYrek9zuqgzE8JwDy7dZ6jMz99b9yHRBSF8oF8xKr9RmT8EIw0p0fcAzyswKKL31xODR_TNk_Jqu5HHoODFenF2cSKIhQzIhO7-tFbt88vbIrlvrxyPX2gBD4glRlJOQtrDHzHmqm9y2LCL_cfQQk1apdh41RcL0xrV0KLwKqhRVqcV7_ogDmkSrAsocpzL6fbDDv8hXeDwo1gmOqCEFoIBiX5PB6=s768-no?authuser=0") },
->>>>>>> 94d3350004e706cd60465fab69fcf3e3ff82b148
                     };
                     break;
             }
