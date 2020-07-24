@@ -22,6 +22,7 @@ namespace SWMproject.Dialogs
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
             AddDialog(new OrderDialog(userState));
             AddDialog(new KeywordOrderDialog(userState));
+            AddDialog(new TopSandwichOrderDialog(userState));
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
 
@@ -35,7 +36,7 @@ namespace SWMproject.Dialogs
                new PromptOptions
                {
                    Prompt = MessageFactory.Text("어떤 방법으로 주문하시겠습니까?"),
-                   Choices = ChoiceFactory.ToChoices(new List<string> { "샌드위치 만들어서 주문하기", "키워드 주문하기" }),
+                   Choices = ChoiceFactory.ToChoices(new List<string> { "샌드위치 만들어서 주문하기", "키워드 주문하기","TOP5 샌드위치 보기" }),
                }, cancellationToken);
         }
         private static async Task<DialogTurnResult> BeginDialogStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -44,6 +45,7 @@ namespace SWMproject.Dialogs
             {
                 case "샌드위치 만들어서 주문하기": return await stepContext.BeginDialogAsync(nameof(OrderDialog), null, cancellationToken); 
                 case "키워드 주문하기": return await stepContext.BeginDialogAsync(nameof(KeywordOrderDialog), null, cancellationToken);
+                case "TOP5 샌드위치 보기": return await stepContext.BeginDialogAsync(nameof(TopSandwichOrderDialog), null, cancellationToken);
                 default: return await stepContext.EndDialogAsync();
             }
         }
