@@ -11,6 +11,8 @@ using SWMproject.Data;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace SWMproject.Dialogs
 {
@@ -21,6 +23,7 @@ namespace SWMproject.Dialogs
         private static Container container = null;
         private static readonly string databaseId = "test";
         private static readonly string containerId = "Order";
+        private static readonly string countContainerId = "Count";
         public OrderEndDialog(UserState userState) : base(nameof(OrderEndDialog))
         {
             _orderDataAccessor = userState.CreateProperty<OrderData>("OrderData");
@@ -163,15 +166,73 @@ namespace SWMproject.Dialogs
                 }
             }
 
-            //한사람이 여러개를 주문한 경우, 각각의 샌드위치마다 ID값을 증가시키며 데이터 삽입
+            //Order 데이터 삽입
             foreach (Sandwich tempSand in orderData.Sandwiches)
             {
                 string sJson = JsonConvert.SerializeObject(tempSand);
                 var dbData = new DBdata { id = $"{orderData.OrderNum++}", Contents = tempSand, ETag = "x", AccountNumber = ipAddr };
-                
+
                 await container.CreateItemAsync<DBdata>(dbData, new PartitionKey(dbData.AccountNumber));
             }
 
+            //container 변경
+            containerProperties = new ContainerProperties(countContainerId, partitionKeyPath: "/AccountNumber");
+            // Create with a throughput of 1000 RU/s
+            container = await database.CreateContainerIfNotExistsAsync(
+                containerProperties,
+                throughput: 1000);
+
+            //Count 데이터 삽입
+            foreach (Sandwich tempSand in orderData.Sandwiches)
+            {
+                var CountId = 0;
+                string sauce = "";
+                tempSand.Sauce.Sort();
+                foreach (string temp in tempSand.Sauce)
+                {
+                    sauce += temp + " ";
+                }
+
+                //CountId 찾기
+                try
+                {
+                    FeedIterator<DBcount> feedIterator = container.GetItemQueryIterator<DBcount>("SELECT top 1 * FROM c order by c._ts desc");
+                    {
+                        while (feedIterator.HasMoreResults)
+                        {
+                            FeedResponse<DBcount> result = await feedIterator.ReadNextAsync();
+                            foreach (var item in result)
+                            {
+                                CountId = Int32.Parse(item.id) + 1;
+                            }
+                        }
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    CountId = 0;
+                }
+
+                try {
+                    FeedIterator<DBcount> feedIterator = container.GetItemQueryIterator<DBcount>("SELECT * FROM c WHERE c.Sauce='" + sauce + "' and c.Bread ='" + tempSand.Bread + "' and c.Menu ='" + tempSand.Menu + "'");
+                    {
+                        if (feedIterator.HasMoreResults)
+                        {
+                            FeedResponse<DBcount> result = await feedIterator.ReadNextAsync();
+                            DBcount res = result.First();
+                            var count = res.Count + 1;
+                            DBcount countData = new DBcount(); countData.id = res.id; countData.Count = count; countData.Sauce = sauce; countData.Menu = tempSand.Menu; countData.ETag = "x"; countData.AccountNumber = "0"; countData.Bread = tempSand.Bread;
+                            ItemResponse<DBcount> item = await container.DeleteItemAsync<DBcount>(partitionKey: new PartitionKey("0"), id: res.id);
+                            await container.CreateItemAsync(countData, new PartitionKey("0"));
+                        }
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    var countData = new DBcount { id = $"{CountId}", Count = 1, Bread = $"{tempSand.Bread}", Sauce = sauce, Menu = $"{tempSand.Menu}", ETag = "x", AccountNumber = "0" };
+                    await container.CreateItemAsync<DBcount>(countData, new PartitionKey("0"));
+                }
+            }
             return await stepContext.EndDialogAsync();
         }
     }
