@@ -4,8 +4,10 @@
 -------------------------------------------------------
 
 ## 서비스 소개
-* 챗봇 접속 url https://swm-chatbot.github.io/SandwichMaker/SandwichMaker.html
-<img src="https://user-images.githubusercontent.com/53828411/88382789-28dc8680-cde4-11ea-9f95-86c74d101b5c.png" width="40%" title="테스트" alt="test"></img>
+* 챗봇 접속 url https://swm-chatbot.github.io/SandwichMaker/SandwichMaker.html   
+### 서비스 흐름도
+* 전체 구조
+<img src="https://user-images.githubusercontent.com/53828411/88382789-28dc8680-cde4-11ea-9f95-86c74d101b5c.png" title="테스트" alt="test"></img>
 
 ## 시연영상
 * v0.1 https://youtu.be/7rXMKE97_oA
