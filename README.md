@@ -7,7 +7,9 @@
 * 챗봇 접속 url https://swm-chatbot.github.io/SandwichMaker/SandwichMaker.html   
 ### 서비스 흐름도
 * 전체 구조
-<img src="https://user-images.githubusercontent.com/53828411/88382789-28dc8680-cde4-11ea-9f95-86c74d101b5c.png" title="테스트" alt="test"></img>
+<img src="https://user-images.githubusercontent.com/53828411/88382789-28dc8680-cde4-11ea-9f95-86c74d101b5c.png" title="전체 구조" alt="flow chart 1"></img>
+* 샌드위치 만들기 구조   
+<img src="https://user-images.githubusercontent.com/47727109/88382949-7d800180-cde4-11ea-8b15-bd9ab8d08115.png" width="30%" title="주문 구조" alt="flow chart 2"></img>
 
 ## 시연영상
 * v0.1 https://youtu.be/7rXMKE97_oA
