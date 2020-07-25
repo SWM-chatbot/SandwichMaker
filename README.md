@@ -14,10 +14,11 @@
 ## 시연영상
 * v0.1 https://youtu.be/7rXMKE97_oA
 * v0.5 https://youtu.be/bTkqM2z_5sU
-* v1.0
+* v1.0 https://youtu.be/CQRpyrL__ls
 
 ## 프로젝트 
 Bot Framework v4 core bot based C#
+* 프로젝트 코드 설명 
 
 ### 사전준비
 * [Install](https://visualstudio.microsoft.com/ko/vs/) Visual Studio 2019 including ASP.NET, Azure개발
