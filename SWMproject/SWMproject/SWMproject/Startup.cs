@@ -26,6 +26,8 @@ namespace SWMproject
         public static string ContainerId_order;
         public static string ContainerId_keyword;
         public static string ContainerId_count;
+        public static string KakaoAPI;
+        public static string KakaoKey;
         public Startup(IConfiguration iconfig)
         {
             _configuration = iconfig;
@@ -43,6 +45,8 @@ namespace SWMproject
             ContainerId_order = _configuration.GetValue<string>("CosmosDbContainerId1");
             ContainerId_keyword = _configuration.GetValue<string>("CosmosDbContainerId2");
             ContainerId_count = _configuration.GetValue<string>("CosmosDbContainerId3");
+            KakaoAPI = _configuration.GetValue<string>("KakaoSearchAPI");
+            KakaoKey = _configuration.GetValue<string>("KakaoSearchKeys");
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();

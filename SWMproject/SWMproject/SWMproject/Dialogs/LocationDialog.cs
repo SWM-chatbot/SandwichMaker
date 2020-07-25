@@ -62,10 +62,10 @@ namespace SWMproject.Dialogs
         {
             string Input = (string)stepContext.Result;
 
-            string site = "https://dapi.kakao.com/v2/local/search/keyword.json";
+            string site = Startup.KakaoAPI;
             string query = string.Format("{0}?query={1}", site, Input+" 서브웨이");
             WebRequest request = WebRequest.Create(query);
-            string rkey = "bae3f470ce71b9925187548a1306e592";
+            string rkey = Startup.KakaoKey;
 
             string header = "KakaoAK " + rkey;
             request.Headers.Add("Authorization", header);
