@@ -17,8 +17,8 @@ namespace SWMproject.Dialogs
     {
         private readonly IStatePropertyAccessor<OrderData> _orderDataAccessor;
         
-        private static AzureKeyCredential credentials= new AzureKeyCredential("805fa0ee93384dbf8524ffbc66d393e1");
-        private static Uri endpoint = new Uri("https://team20-ta.cognitiveservices.azure.com/");
+        private static AzureKeyCredential credentials= new AzureKeyCredential(Startup.TAKey);
+        private static Uri endpoint = new Uri(Startup.TAEndpoint);
 
         static Response<KeyPhraseCollection> KeyPhraseExtraction(TextAnalyticsClient client,string input)
         {
