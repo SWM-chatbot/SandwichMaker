@@ -18,7 +18,7 @@
 
 ## 프로젝트 
 Bot Framework v4 core bot based C#
-* 프로젝트 코드 설명 
+* 프로젝트 코드 설명  https://youtu.be/7TJqSe_E0Sw
 
 ### 사전준비
 * [Install](https://visualstudio.microsoft.com/ko/vs/) Visual Studio 2019 including ASP.NET, Azure개발
