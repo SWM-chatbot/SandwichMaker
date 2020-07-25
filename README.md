@@ -37,13 +37,10 @@ Bot Framework v4 core bot based C#
 1. 리소스 만들기 > 'Azure Cosmos DB' 선택
 2. 컨테이너 만들기
 
-    A. 생성된 Cosmos DB 리소스 관리창 이동
-    
-    B. '데이터 탐색기' 선택
-    
-    C. 'new Database'로 데이터베이스 생성
-    
-    D. 생성된 데이터베이스에서 'new Container' 생성 
+    A) 생성된 Cosmos DB 리소스 관리창 이동   
+    B) '데이터 탐색기' 선택   
+    C) 'new Database'로 데이터베이스 생성   
+    D) 생성된 데이터베이스에서 'new Container' 생성    
     > 이 프로젝트에서는 Partition Key를 AccountNumber로 사용했습니다
     
    * 참고 [Azure Bot Service 설명 - 스토리지에 직접 작성](https://docs.microsoft.com/ko-kr/azure/bot-service/bot-builder-howto-v4-storage?view=azure-bot-service-4.0&tabs=csharp)
@@ -79,6 +76,14 @@ cd SWMproject
   "TextAnalyticsEndpoint": "{your text analytics url}"
     ```
     * Press F5 to run the project
+
+### 봇 테스트
+* Testing the bot using Bot Framework Emulator   
+*Bot Framework Emulator is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
+
+   A) Launch Bot Framework Emulator   
+   B) File -> Open Bot   
+   C) Enter a Bot URL of http://localhost:3978/api/messages   
 
 ### 봇 배포하기
 * 참고 [Bot Framework 4.0 개발 가이드 (3) 배포하기|작성자 warit](http://blog.naver.com/warit/221558237007)
