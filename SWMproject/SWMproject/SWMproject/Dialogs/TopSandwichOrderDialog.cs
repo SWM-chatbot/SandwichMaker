@@ -5,15 +5,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
-using Microsoft.Bot.Schema;
-using Newtonsoft.Json;
 using SWMproject.Data;
-using System.Net;
-using System.Net.Sockets;
-using System;
-using System.Linq;
-using Microsoft.Azure.Documents.Client;
-using System.Reflection.Metadata;
 
 namespace SWMproject.Dialogs
 {
@@ -21,8 +13,8 @@ namespace SWMproject.Dialogs
     {
         private static Database database = null;
         private static Container container = null;
-        private static readonly string databaseId = "test";
-        private static readonly string containerId = "Count";
+        private static readonly string databaseId = Startup.DatabaseId;
+        private static readonly string containerId = Startup.ContainerId_count;
 
         public TopSandwichOrderDialog(UserState userState) : base(nameof(TopSandwichOrderDialog))
         {
@@ -43,10 +35,10 @@ namespace SWMproject.Dialogs
         }
         private static async Task<DialogTurnResult> ShowRankingStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            CosmosClient client = new CosmosClient("https://sandwichmaker-db.documents.azure.com:443/", "a9myphpBRmWUJ5ZLKdCiVEODOtSkiOWr66uKWOCyGljEo2C6Vru1qZ6V4vmXH8VUrij3zriZlQ93xIU4vlZlzA==");
+            CosmosClient client = new CosmosClient(Startup.CosmosDbEndpoint, Startup.AuthKey);
             database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
 
-            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: "/AccountNumber");
+            ContainerProperties containerProperties = new ContainerProperties(containerId, partitionKeyPath: Startup.PartitionKey);
             // Create with a throughput of 1000 RU/s
             container = await database.CreateContainerIfNotExistsAsync(
                 containerProperties,
@@ -80,7 +72,7 @@ namespace SWMproject.Dialogs
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
-                   Prompt = MessageFactory.Text("주문하시겠습니까?"),
+                   Prompt = MessageFactory.Text("샌드위치를 만들러 갈까요?"),
                    Choices = ChoiceFactory.ToChoices(new List<string> { "네", "아니오" }),
                }, cancellationToken);
         }
