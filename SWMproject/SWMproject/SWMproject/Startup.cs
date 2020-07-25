@@ -50,7 +50,7 @@ namespace SWMproject
             TAEndpoint = _configuration.GetValue<string>("TextAnalyticsEndpoint");
             TAKey = _configuration.GetValue<string>("TextAnalyticsKey");
             KakaoAPI = _configuration.GetValue<string>("KakaoSearchAPI");
-            KakaoKey = _configuration.GetValue<string>("KakaoSearchKeys");
+            KakaoKey = _configuration.GetValue<string>("KakaoSearchKey");
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
