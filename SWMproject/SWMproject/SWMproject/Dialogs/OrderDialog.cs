@@ -80,6 +80,7 @@ namespace SWMproject.Dialogs
         
         private static async Task<DialogTurnResult> BreadStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            await stepContext.Context.SendActivityAsync(Cards.GetCard("bread"), cancellationToken);
             return await stepContext.PromptAsync(nameof(ChoicePrompt),
                new PromptOptions
                {
