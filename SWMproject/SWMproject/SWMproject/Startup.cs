@@ -26,6 +26,8 @@ namespace SWMproject
         public static string ContainerId_order;
         public static string ContainerId_keyword;
         public static string ContainerId_count;
+        public static string TAEndpoint;
+        public static string TAKey;
         public static string KakaoAPI;
         public static string KakaoKey;
         public Startup(IConfiguration iconfig)
@@ -45,6 +47,8 @@ namespace SWMproject
             ContainerId_order = _configuration.GetValue<string>("CosmosDbContainerId1");
             ContainerId_keyword = _configuration.GetValue<string>("CosmosDbContainerId2");
             ContainerId_count = _configuration.GetValue<string>("CosmosDbContainerId3");
+            TAEndpoint = _configuration.GetValue<string>("TextAnalyticsEndpoint");
+            TAKey = _configuration.GetValue<string>("TextAnalyticsKey");
             KakaoAPI = _configuration.GetValue<string>("KakaoSearchAPI");
             KakaoKey = _configuration.GetValue<string>("KakaoSearchKeys");
 
